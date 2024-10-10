@@ -13,7 +13,7 @@ interface pci_bridge_pci_interface(input logic clk);
 	////////////////////////////////////////////////////////////////////////////
 	// clocking block and modport declaration for driver 
 	////////////////////////////////////////////////////////////////////////////
-	clocking dr_cb@(posedge clk) ;
+	clocking dr_cb@(posedge clk);
 		inout	AD;
 		inout	CBE;
 		output	RST;
@@ -31,12 +31,12 @@ interface pci_bridge_pci_interface(input logic clk);
 		input	SERR;
   	endclocking
   
-  	modport DRV (clocking dr_cb, input clk) ;
+  	modport DRV (clocking dr_cb, input clk);
 
 	////////////////////////////////////////////////////////////////////////////
 	// clocking block and modport declaration for monitor 
 	////////////////////////////////////////////////////////////////////////////
-	clocking rc_cb@(negedge clk) ;
+	clocking rc_cb@(negedge clk);
 		input	AD;
 		input	CBE;
 		input	RST;
@@ -54,7 +54,7 @@ interface pci_bridge_pci_interface(input logic clk);
 		input	SERR;
 	endclocking
   
-  modport RCV (clocking rc_cb, input clk);
+  	modport RCV (clocking rc_cb, input clk);
 
 endinterface
 

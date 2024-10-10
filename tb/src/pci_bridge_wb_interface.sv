@@ -3,9 +3,9 @@
 
 interface pci_bridge_wb_interface(input logic clk);
 
-	////////////////////////////////////////////////////////////////////////////
-	// Declaration of Signals
-	////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    // Declaration of Signals
+    ////////////////////////////////////////////////////////////////////////////
 
     // WISHBONE system signals
     logic RST_I, RST_O, INT_I, INT_O;
@@ -29,7 +29,7 @@ interface pci_bridge_wb_interface(input logic clk);
 	////////////////////////////////////////////////////////////////////////////
 	// clocking block and modport declaration for driver 
 	////////////////////////////////////////////////////////////////////////////
-	clocking dr_cb@(posedge clk) ;
+	clocking dr_cb@(posedge clk);
         // WISHBONE system signals
         output	RST_I;
         input	RST_O;
@@ -66,12 +66,12 @@ interface pci_bridge_wb_interface(input logic clk);
 		output	ERR_I;
   	endclocking
   
-  	modport DRV (clocking dr_cb, input clk) ;
+  	modport DRV (clocking dr_cb, input clk);
 
 	////////////////////////////////////////////////////////////////////////////
 	// clocking block and modport declaration for monitor 
 	////////////////////////////////////////////////////////////////////////////
-	clocking rc_cb@(negedge clk) ;
+	clocking rc_cb@(negedge clk);
         // WISHBONE system signals
         input	RST_I;
         input	RST_O;
@@ -108,7 +108,7 @@ interface pci_bridge_wb_interface(input logic clk);
 		input	ERR_I;
 	endclocking
   
-  modport RCV (clocking rc_cb, input clk);
+  	modport RCV (clocking rc_cb, input clk);
 
 endinterface
 
