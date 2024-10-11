@@ -59,9 +59,9 @@ class pci_bridge_pci_driver extends uvm_driver #(pci_bridge_pci_transaction);
 	// Description : reset DUT
 	//////////////////////////////////////////////////////////////////////////////
 	task reset();
-		vif.RST <= 1'b1;
-		repeat(5) @(posedge vif.dr_cb);
 		vif.RST <= 1'b0;
+		repeat(5) @(posedge vif.dr_cb);
+		vif.RST <= 1'b1;
 	endtask
 
 endclass : pci_bridge_pci_driver
