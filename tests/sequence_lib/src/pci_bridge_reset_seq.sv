@@ -1,0 +1,33 @@
+`ifndef PCI_BRIDGE_RESET_SEQ 
+`define PCI_BRIDGE_RESET_SEQ
+class pci_bridge_reset_seq extends uvm_sequence#(pci_bridge_pci_transaction);
+
+	///////////////////////////////////////////////////////////////////////////////
+	// Declaration of Sequence utils
+	//////////////////////////////////////////////////////////////////////////////
+	`uvm_object_utils(pci_bridge_reset_seq)
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : new
+	// Description : sequence constructor
+	//////////////////////////////////////////////////////////////////////////////
+	function new(string name = "pci_bridge_reset_seq");
+		super.new(name);
+	endfunction
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : body 
+	// Description : Body of sequence to send randomized transaction through
+	// sequencer to driver
+	//////////////////////////////////////////////////////////////////////////////
+	virtual task body();
+		req = pci_bridge_pci_transaction::type_id::create("req");
+		start_item(req);
+		req.operation = pci_bridge_pci_transaction::RESET;
+		finish_item(req);
+		get_response(rsp);
+	endtask
+	 
+endclass
+
+`endif
+
+
