@@ -1,7 +1,7 @@
 `ifndef ADDER_4_BIT_SEQ_LIST 
 `define ADDER_4_BIT_SEQ_LIST
 
-package adder_4_bit_seq_list;
+package pci_bridge_seq_list;
 
  import uvm_pkg::*;
  `include "uvm_macros.svh"

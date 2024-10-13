@@ -40,7 +40,7 @@ class pci_bridge_pci_driver extends uvm_driver #(pci_bridge_pci_transaction);
 		forever begin
 			seq_item_port.get_next_item(req);
 			case (req.operation)
-				pci_seq_item::RESET: reset();
+				pci_bridge_pci_transaction::RESET: reset();
 			endcase
 			// log
 			`uvm_info(get_full_name(),$sformatf("TRANSACTION FROM DRIVER"),UVM_LOW);
