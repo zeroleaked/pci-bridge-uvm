@@ -1,8 +1,8 @@
-`ifndef PCI_BRIDGE_ENV_PKG
-`define PCI_BRIDGE_ENV_PKG
+`ifndef PCI_BRIDGE_REF_MODEL_PKG
+`define PCI_BRIDGE_REF_MODEL_PKG
 
-package pci_bridge_env_pkg;
-   
+package pci_bridge_ref_model_pkg;
+
    import uvm_pkg::*;
    `include "uvm_macros.svh"
 
@@ -10,17 +10,15 @@ package pci_bridge_env_pkg;
    // importing packages : agent,ref model, register ...
    /////////////////////////////////////////////////////////
    import pci_bridge_pci_agent_pkg::*;
-   import pci_bridge_ref_model_pkg::*;
 
    //////////////////////////////////////////////////////////
-   // include top env files 
+   // include ref model files 
    /////////////////////////////////////////////////////////
-  `include "pci_bridge_coverage.sv"
-  `include "pci_bridge_scoreboard.sv"
-  `include "pci_bridge_env.sv"
+  `include "pci_bridge_ref_model.sv"
 
 endpackage
 
 `endif
+
 
 

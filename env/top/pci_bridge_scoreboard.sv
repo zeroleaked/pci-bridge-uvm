@@ -10,8 +10,8 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Analysis ports and exports 
 	///////////////////////////////////////////////////////////////////////////////
-	uvm_analysis_export#(pci_bridge_transaction) rm2sb_export,mon2sb_export;
-	uvm_tlm_analysis_fifo#(pci_bridge_transaction) rm2sb_export_fifo,mon2sb_export_fifo;
+	uvm_analysis_export#(pci_bridge_pci_transaction) rm2sb_export,mon2sb_export;
+	uvm_tlm_analysis_fifo#(pci_bridge_pci_transaction) rm2sb_export_fifo,mon2sb_export_fifo;
 	pci_bridge_pci_transaction exp_trans,act_trans;
 	pci_bridge_pci_transaction exp_trans_fifo[$],act_trans_fifo[$];
 	bit error;
