@@ -31,6 +31,7 @@ module pci_bridge_tb_top;
 
 
 	TOP dut_inst(
+		.CLK(clk),
 		.AD(pci_intf.AD),
 		.CBE(pci_intf.CBE),
 		.RST(pci_intf.RST),
