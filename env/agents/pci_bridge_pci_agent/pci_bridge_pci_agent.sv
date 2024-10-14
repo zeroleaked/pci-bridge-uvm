@@ -1,17 +1,17 @@
-`ifndef ADDER_4_BIT_AGENT 
-`define ADDER_4_BIT_AGENT
+`ifndef PCI_BRIDGE_PCI_AGENT 
+`define PCI_BRIDGE_PCI_AGENT
 
-class adder_4_bit_agent extends uvm_agent;
+class pci_bridge_pci_agent extends uvm_agent;
   ///////////////////////////////////////////////////////////////////////////////
   // Declaration of UVC components such as.. driver,monitor,sequencer..etc
   ///////////////////////////////////////////////////////////////////////////////
-  adder_4_bit_driver    driver;
-  adder_4_bit_sequencer sequencer;
-  adder_4_bit_monitor   monitor;
+  pci_bridge_pci_driver    driver;
+  pci_bridge_pci_sequencer sequencer;
+  pci_bridge_pci_monitor   monitor;
   ///////////////////////////////////////////////////////////////////////////////
   // Declaration of component utils 
   ///////////////////////////////////////////////////////////////////////////////
-  `uvm_component_utils(adder_4_bit_agent)
+  `uvm_component_utils(pci_bridge_pci_agent)
   ///////////////////////////////////////////////////////////////////////////////
   // Method name : new 
   // Description : constructor
@@ -25,9 +25,9 @@ class adder_4_bit_agent extends uvm_agent;
   ///////////////////////////////////////////////////////////////////////////////
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    driver = adder_4_bit_driver::type_id::create("driver", this);
-    sequencer = adder_4_bit_sequencer::type_id::create("sequencer", this);
-    monitor = adder_4_bit_monitor::type_id::create("monitor", this);
+    driver = pci_bridge_pci_driver::type_id::create("driver", this);
+    sequencer = pci_bridge_pci_sequencer::type_id::create("sequencer", this);
+    monitor = pci_bridge_pci_monitor::type_id::create("monitor", this);
   endfunction : build_phase
   ///////////////////////////////////////////////////////////////////////////////
   // Method name : connect_phase 
@@ -37,6 +37,6 @@ class adder_4_bit_agent extends uvm_agent;
       driver.seq_item_port.connect(sequencer.seq_item_export);
   endfunction : connect_phase
  
-endclass : adder_4_bit_agent
+endclass : pci_bridge_pci_agent
 
 `endif

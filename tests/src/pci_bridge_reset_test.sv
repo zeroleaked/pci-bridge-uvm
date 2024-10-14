@@ -1,20 +1,20 @@
-`ifndef ADDER_4_BIT_BASIC_TEST 
-`define ADDER_4_BIT_BASIC_TEST
+`ifndef PCI_BRIDGE_RESET_TEST 
+`define PCI_BRIDGE_RESET_TEST
 
-class adder_4_bit_basic_test extends uvm_test;
+class pci_bridge_reset_test extends uvm_test;
  
   ////////////////////////////////////////////////////////////////////
   //declaring component utils for the basic test-case 
   ////////////////////////////////////////////////////////////////////
-  `uvm_component_utils(adder_4_bit_basic_test)
+  `uvm_component_utils(pci_bridge_reset_test)
  
-  adder_4_bit_environment     env;
-  adder_4_bit_basic_seq       seq;
+  pci_bridge_environment     env;
+  pci_bridge_reset_seq       seq;
   ////////////////////////////////////////////////////////////////////
   // Method name : new
   // Decription: Constructor 
   ////////////////////////////////////////////////////////////////////
-  function new(string name = "adder_4_bit_basic_test",uvm_component parent=null);
+  function new(string name = "pci_bridge_reset_test",uvm_component parent=null);
     super.new(name,parent);
   endfunction : new
   ////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@ class adder_4_bit_basic_test extends uvm_test;
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
  
-    env = adder_4_bit_environment::type_id::create("env", this);
-    seq = adder_4_bit_basic_seq::type_id::create("seq");
+    env = pci_bridge_environment::type_id::create("env", this);
+    seq = pci_bridge_reset_seq::type_id::create("seq");
   endfunction : build_phase
   ////////////////////////////////////////////////////////////////////
   // Method name : run_phase 
@@ -33,11 +33,11 @@ class adder_4_bit_basic_test extends uvm_test;
   ////////////////////////////////////////////////////////////////////
   task run_phase(uvm_phase phase);
     phase.raise_objection(this);
-     seq.start(env.adder_4_bit_agnt.sequencer);
+     seq.start(env.pci_agent.sequencer);
     phase.drop_objection(this);
   endtask : run_phase
  
-endclass : adder_4_bit_basic_test
+endclass : pci_bridge_reset_test
 
 `endif
 

@@ -1,7 +1,7 @@
-`ifndef ADDER_4_BIT_REF_MODEL_PKG
-`define ADDER_4_BIT_REF_MODEL_PKG
+`ifndef PCI_BRIDGE_REF_MODEL_PKG
+`define PCI_BRIDGE_REF_MODEL_PKG
 
-package adder_4_bit_ref_model_pkg;
+package pci_bridge_ref_model_pkg;
 
    import uvm_pkg::*;
    `include "uvm_macros.svh"
@@ -9,12 +9,12 @@ package adder_4_bit_ref_model_pkg;
    //////////////////////////////////////////////////////////
    // importing packages : agent,ref model, register ...
    /////////////////////////////////////////////////////////
-   import adder_4_bit_agent_pkg::*;
+   import pci_bridge_pci_agent_pkg::*;
 
    //////////////////////////////////////////////////////////
    // include ref model files 
    /////////////////////////////////////////////////////////
-  `include "adder_4_bit_ref_model.sv"
+  `include "pci_bridge_ref_model.sv"
 
 endpackage
 

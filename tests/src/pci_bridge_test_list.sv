@@ -1,19 +1,19 @@
-`ifndef ADDER_4_BIT_TEST_LIST 
-`define ADDER_4_BIT_TEST_LIST
+`ifndef PCI_BRIDGE_TEST_LIST 
+`define PCI_BRIDGE_TEST_LIST
 
-package adder_4_bit_test_list;
+package pci_bridge_test_list;
 
  import uvm_pkg::*;
  `include "uvm_macros.svh"
 
- import adder_4_bit_env_pkg::*;
- import adder_4_bit_seq_list::*;
+ import pci_bridge_env_pkg::*;
+ import pci_bridge_seq_list::*;
 
  //////////////////////////////////////////////////////////////////////////////
- // including adder_4_bit test list
+ // including pci_bridge test list
  //////////////////////////////////////////////////////////////////////////////
 
- `include "adder_4_bit_basic_test.sv"
+ `include "pci_bridge_reset_test.sv"
 
 endpackage 
 

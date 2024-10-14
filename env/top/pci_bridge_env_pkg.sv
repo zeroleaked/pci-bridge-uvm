@@ -1,7 +1,7 @@
-`ifndef ADDER_4_BIT_ENV_PKG
-`define ADDER_4_BIT_ENV_PKG
+`ifndef PCI_BRIDGE_ENV_PKG
+`define PCI_BRIDGE_ENV_PKG
 
-package adder_4_bit_env_pkg;
+package pci_bridge_env_pkg;
    
    import uvm_pkg::*;
    `include "uvm_macros.svh"
@@ -9,15 +9,15 @@ package adder_4_bit_env_pkg;
    //////////////////////////////////////////////////////////
    // importing packages : agent,ref model, register ...
    /////////////////////////////////////////////////////////
-   import adder_4_bit_agent_pkg::*;
-   import adder_4_bit_ref_model_pkg::*;
+   import pci_bridge_pci_agent_pkg::*;
+   import pci_bridge_ref_model_pkg::*;
 
    //////////////////////////////////////////////////////////
    // include top env files 
    /////////////////////////////////////////////////////////
-  `include "adder_4_bit_coverage.sv"
-  `include "adder_4_bit_scoreboard.sv"
-  `include "adder_4_bit_env.sv"
+  `include "pci_bridge_coverage.sv"
+  `include "pci_bridge_scoreboard.sv"
+  `include "pci_bridge_env.sv"
 
 endpackage
 

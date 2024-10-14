@@ -1,9 +1,9 @@
-`ifndef ADDER_4_BIT_SEQUENCER
-`define ADDER_4_BIT_SEQUENCER
+`ifndef PCI_BRIDGE_PCI_SEQUENCER
+`define PCI_BRIDGE_PCI_SEQUENCER
 
-class adder_4_bit_sequencer extends uvm_sequencer#(adder_4_bit_transaction);
+class pci_bridge_pci_sequencer extends uvm_sequencer#(pci_bridge_pci_transaction);
  
-  `uvm_component_utils(adder_4_bit_sequencer)
+  `uvm_component_utils(pci_bridge_pci_sequencer)
  
   ///////////////////////////////////////////////////////////////////////////////
   //constructor
