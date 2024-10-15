@@ -55,7 +55,7 @@ class pci_bridge_wb_monitor extends uvm_monitor;
 	function void check_reset_propagation();
 	if (vif.rc_cb.RST_O == 1) begin
 		`uvm_info("WB_MONITOR", "Wishbone reset detected", UVM_LOW)
-		act_trans.operation = pci_bridge_pci_transaction::RESET;
+		act_trans.operation = pci_bridge_wb_transaction::RESET;
 	end
   endfunction
 
