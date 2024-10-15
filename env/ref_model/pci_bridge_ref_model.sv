@@ -6,10 +6,15 @@ class pci_bridge_ref_model extends uvm_component;
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of Local Signals 
 	//////////////////////////////////////////////////////////////////////////////
-	uvm_analysis_export#(pci_bridge_pci_transaction) rm_export;
-	uvm_analysis_port#(pci_bridge_pci_transaction) rm2sb_port;
-	pci_bridge_pci_transaction exp_trans,rm_trans;
-	uvm_tlm_analysis_fifo#(pci_bridge_pci_transaction) rm_exp_fifo;
+	uvm_analysis_export#(pci_bridge_pci_transaction) pci_rm_export;
+	uvm_analysis_port#(pci_bridge_pci_transaction) pci_rm2sb_port;
+	pci_bridge_pci_transaction pci_exp_trans,pci_rm_trans;
+	uvm_tlm_analysis_fifo#(pci_bridge_pci_transaction) pci_rm_exp_fifo;
+
+	uvm_analysis_export#(pci_bridge_wb_transaction) wb_rm_export;
+	uvm_analysis_port#(pci_bridge_wb_transaction) wb_rm2sb_port;
+	pci_bridge_wb_transaction wb_exp_trans,wb_rm_trans;
+	uvm_tlm_analysis_fifo#(pci_bridge_wb_transaction) wb_rm_exp_fifo;
 	//////////////////////////////////////////////////////////////////////////////
 	//constructor
 	//////////////////////////////////////////////////////////////////////////////
@@ -22,9 +27,13 @@ class pci_bridge_ref_model extends uvm_component;
 	///////////////////////////////////////////////////////////////////////////////
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		rm_export = new("rm_export", this);
-		rm2sb_port = new("rm2sb_port", this);
-		rm_exp_fifo = new("rm_exp_fifo", this);
+		pci_rm_export = new("pci_rm_export", this);
+		pci_rm2sb_port = new("pci_rm2sb_port", this);
+		pci_rm_exp_fifo = new("pci_rm_exp_fifo", this);
+
+		wb_rm_export = new("wb_rm_export", this);
+		wb_rm2sb_port = new("wb_rm2sb_port", this);
+		wb_rm_exp_fifo = new("wb_rm_exp_fifo", this);
 	endfunction : build_phase
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : connect_phase 
@@ -32,7 +41,8 @@ class pci_bridge_ref_model extends uvm_component;
 	///////////////////////////////////////////////////////////////////////////////
 	function void connect_phase(uvm_phase phase);
 		super.connect_phase(phase);
-		rm_export.connect(rm_exp_fifo.analysis_export);
+		pci_rm_export.connect(pci_rm_exp_fifo.analysis_export);
+		wb_rm_export.connect(wb_rm_exp_fifo.analysis_export);
 	endfunction : connect_phase
 	//////////////////////////////////////////////////////////////////////////////
 	// Method name : run 
@@ -40,20 +50,21 @@ class pci_bridge_ref_model extends uvm_component;
 	//////////////////////////////////////////////////////////////////////////////
 	task run_phase(uvm_phase phase);
 		forever begin
-			rm_exp_fifo.get(rm_trans);
-			get_expected_transaction(rm_trans);
+			pci_rm_exp_fifo.get(pci_rm_trans);
+			wb_rm_exp_fifo.get(wb_rm_trans);
+			get_expected_transaction(pci_rm_trans);
 		end
 	endtask
 	//////////////////////////////////////////////////////////////////////////////
 	// Method name : get_expected_transaction 
 	// Description : Expected transaction 
 	//////////////////////////////////////////////////////////////////////////////
-	task get_expected_transaction(pci_bridge_pci_transaction rm_trans);
-		this.exp_trans =	rm_trans ;
+	task get_expected_transaction(pci_bridge_pci_transaction pci_rm_trans);
+		this.pci_exp_trans = pci_rm_trans;
 		`uvm_info(get_full_name(),$sformatf("EXPECTED TRANSACTION FROM REF MODEL"),UVM_LOW);
-		exp_trans.print();
-		exp_trans.operation = pci_bridge_pci_transaction::RESET;
-		rm2sb_port.write(exp_trans);
+		pci_exp_trans.print();
+		pci_exp_trans.operation = pci_bridge_pci_transaction::RESET;
+		pci_rm2sb_port.write(pci_exp_trans);
 	endtask
 
 endclass

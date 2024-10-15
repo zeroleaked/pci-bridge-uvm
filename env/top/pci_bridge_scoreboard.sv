@@ -10,10 +10,16 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Analysis ports and exports 
 	///////////////////////////////////////////////////////////////////////////////
-	uvm_analysis_export#(pci_bridge_pci_transaction) rm2sb_export,mon2sb_export;
-	uvm_tlm_analysis_fifo#(pci_bridge_pci_transaction) rm2sb_export_fifo,mon2sb_export_fifo;
-	pci_bridge_pci_transaction exp_trans,act_trans;
-	pci_bridge_pci_transaction exp_trans_fifo[$],act_trans_fifo[$];
+	uvm_analysis_export#(pci_bridge_pci_transaction) pci_rm2sb_export,pci_mon2sb_export;
+	uvm_tlm_analysis_fifo#(pci_bridge_pci_transaction) pci_rm2sb_export_fifo,pci_mon2sb_export_fifo;
+	pci_bridge_pci_transaction pci_exp_trans,pci_act_trans;
+	pci_bridge_pci_transaction pci_exp_trans_fifo[$],pci_act_trans_fifo[$];
+
+	uvm_analysis_export#(pci_bridge_wb_transaction) wb_rm2sb_export,wb_mon2sb_export;
+	uvm_tlm_analysis_fifo#(pci_bridge_wb_transaction) wb_rm2sb_export_fifo,wb_mon2sb_export_fifo;
+	pci_bridge_wb_transaction wb_exp_trans,wb_act_trans;
+	pci_bridge_wb_transaction wb_exp_trans_fifo[$],wb_act_trans_fifo[$];
+
 	bit error;
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
@@ -28,10 +34,15 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	///////////////////////////////////////////////////////////////////////////////
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		rm2sb_export = new("rm2sb_export", this);
-		mon2sb_export = new("mon2sb_export", this);
-		rm2sb_export_fifo = new("rm2sb_export_fifo", this);
-		mon2sb_export_fifo = new("mon2sb_export_fifo", this);
+		pci_rm2sb_export = new("pci_rm2sb_export", this);
+		pci_mon2sb_export = new("pci_mon2sb_export", this);
+		pci_rm2sb_export_fifo = new("pci_rm2sb_export_fifo", this);
+		pci_mon2sb_export_fifo = new("pci_mon2sb_export_fifo", this);
+
+		wb_rm2sb_export = new("wb_rm2sb_export", this);
+		wb_mon2sb_export = new("wb_mon2sb_export", this);
+		wb_rm2sb_export_fifo = new("wb_rm2sb_export_fifo", this);
+		wb_mon2sb_export_fifo = new("wb_mon2sb_export_fifo", this);
 	endfunction: build_phase
 		///////////////////////////////////////////////////////////////////////////////
 	// Method name : build phase 
@@ -39,8 +50,11 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	///////////////////////////////////////////////////////////////////////////////
 	function void connect_phase(uvm_phase phase);
 		super.connect_phase(phase);
-		rm2sb_export.connect(rm2sb_export_fifo.analysis_export);
-		mon2sb_export.connect(mon2sb_export_fifo.analysis_export);
+		pci_rm2sb_export.connect(pci_rm2sb_export_fifo.analysis_export);
+		pci_mon2sb_export.connect(pci_mon2sb_export_fifo.analysis_export);
+
+		wb_rm2sb_export.connect(wb_rm2sb_export_fifo.analysis_export);
+		wb_mon2sb_export.connect(wb_mon2sb_export_fifo.analysis_export);
 	endfunction: connect_phase
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : run 
@@ -49,12 +63,12 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	virtual task run_phase(uvm_phase phase);
 	 super.run_phase(phase);
 		forever begin
-		 mon2sb_export_fifo.get(act_trans);
-		 if(act_trans==null) $stop;
-		 act_trans_fifo.push_back(act_trans);
-		 rm2sb_export_fifo.get(exp_trans);
-		 if(exp_trans==null) $stop;
-		 exp_trans_fifo.push_back(exp_trans);
+		 pci_mon2sb_export_fifo.get(pci_act_trans);
+		 if(pci_act_trans==null) $stop;
+		 pci_act_trans_fifo.push_back(pci_act_trans);
+		 pci_rm2sb_export_fifo.get(pci_exp_trans);
+		 if(pci_exp_trans==null) $stop;
+		 pci_exp_trans_fifo.push_back(pci_exp_trans);
 		 compare_trans();
 		end
 	endtask
@@ -63,13 +77,13 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	// Description : comparing expected and actual transactions
 	///////////////////////////////////////////////////////////////////////////////
 	task compare_trans();
-		 pci_bridge_pci_transaction exp_trans,act_trans;
-		 if(exp_trans_fifo.size!=0) begin
-			 exp_trans = exp_trans_fifo.pop_front();
-				if(act_trans_fifo.size!=0) begin
-					act_trans = act_trans_fifo.pop_front();
-					`uvm_info(get_full_name(),$sformatf("expected operation = %s , actual operation = %s ",exp_trans.operation.name(),act_trans.operation.name()),UVM_LOW);
-					if(act_trans.operation == pci_bridge_pci_transaction::RESET) begin
+		 pci_bridge_pci_transaction pci_exp_trans,pci_act_trans;
+		 if(pci_exp_trans_fifo.size!=0) begin
+			 pci_exp_trans = pci_exp_trans_fifo.pop_front();
+				if(pci_act_trans_fifo.size!=0) begin
+					pci_act_trans = pci_act_trans_fifo.pop_front();
+					`uvm_info(get_full_name(),$sformatf("expected operation = %s , actual operation = %s ",pci_exp_trans.operation.name(),pci_act_trans.operation.name()),UVM_LOW);
+					if(pci_act_trans.operation == pci_bridge_pci_transaction::RESET) begin
 						 `uvm_info(get_full_name(),$sformatf("Reset test passed on PCI"),UVM_LOW);
 					end else begin
 						 `uvm_error(get_full_name(),$sformatf("PCI reset conditions not met"));
