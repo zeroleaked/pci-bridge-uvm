@@ -45,7 +45,6 @@ class pci_bridge_wb_monitor extends uvm_monitor;
 		forever begin
 			@(vif.rc_cb);
 			check_reset_propagation();
-			mon2sb_port.write(act_trans);
 		end
 	endtask : run_phase
 	///////////////////////////////////////////////////////////////////////////////
@@ -56,12 +55,12 @@ class pci_bridge_wb_monitor extends uvm_monitor;
 	function void check_reset_propagation();
 		if (!reset & (vif.rc_cb.RST_O == 1)) begin
 			`uvm_info("WB_MONITOR", "Wishbone reset on", UVM_LOW)
-			act_trans.operation = pci_bridge_wb_transaction::RESET;
 			reset = 1;
 		end
 		else if (reset & (vif.rc_cb.RST_O == 0)) begin
 			`uvm_info("WB_MONITOR", "Wishbone reset off", UVM_LOW)
-			act_trans.operation = pci_bridge_wb_transaction::NORMAL;
+			act_trans.operation = pci_bridge_wb_transaction::RESET;
+			mon2sb_port.write(act_trans);
 			reset = 0;
 		end
   	endfunction

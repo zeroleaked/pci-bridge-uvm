@@ -63,12 +63,12 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	virtual task run_phase(uvm_phase phase);
 	 super.run_phase(phase);
 		forever begin
-			pci_mon2sb_export_fifo.get(pci_act_trans);
-			if(pci_act_trans==null) $stop;
-			pci_act_trans_fifo.push_back(pci_act_trans);
-			pci_rm2sb_export_fifo.get(pci_exp_trans);
-			if(pci_exp_trans==null) $stop;
-			pci_exp_trans_fifo.push_back(pci_exp_trans);
+			wb_mon2sb_export_fifo.get(wb_act_trans);
+			if(wb_act_trans==null) $stop;
+			wb_act_trans_fifo.push_back(wb_act_trans);
+			wb_rm2sb_export_fifo.get(wb_exp_trans);
+			if(wb_exp_trans==null) $stop;
+			wb_exp_trans_fifo.push_back(wb_exp_trans);
 			`uvm_info(get_full_name(),$sformatf("compare_trans"),UVM_LOW);
 
 		 	compare_trans();
@@ -79,16 +79,16 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	// Description : comparing expected and actual transactions
 	///////////////////////////////////////////////////////////////////////////////
 	task compare_trans();
-		 pci_bridge_pci_transaction pci_exp_trans,pci_act_trans;
-		 if(pci_exp_trans_fifo.size!=0) begin
-			 pci_exp_trans = pci_exp_trans_fifo.pop_front();
-				if(pci_act_trans_fifo.size!=0) begin
-					pci_act_trans = pci_act_trans_fifo.pop_front();
-					`uvm_info(get_full_name(),$sformatf("expected operation = %s , actual operation = %s ",pci_exp_trans.operation.name(),pci_act_trans.operation.name()),UVM_LOW);
-					if(pci_act_trans.operation == pci_bridge_pci_transaction::RESET) begin
-						 `uvm_info(get_full_name(),$sformatf("Reset test passed on PCI"),UVM_LOW);
+		 pci_bridge_wb_transaction wb_exp_trans,wb_act_trans;
+		 if(wb_exp_trans_fifo.size!=0) begin
+			 wb_exp_trans = wb_exp_trans_fifo.pop_front();
+				if(wb_act_trans_fifo.size!=0) begin
+					wb_act_trans = wb_act_trans_fifo.pop_front();
+					`uvm_info(get_full_name(),$sformatf("expected operation = %s , actual operation = %s ",wb_exp_trans.operation.name(),wb_act_trans.operation.name()),UVM_LOW);
+					if(wb_act_trans.operation == pci_bridge_wb_transaction::RESET) begin
+						 `uvm_info(get_full_name(),$sformatf("Reset propagated"),UVM_LOW);
 					end else begin
-						 `uvm_error(get_full_name(),$sformatf("PCI reset conditions not met"));
+						 `uvm_error(get_full_name(),$sformatf("Reset conditions not met"));
 						 error=1;
 					end
 				end
