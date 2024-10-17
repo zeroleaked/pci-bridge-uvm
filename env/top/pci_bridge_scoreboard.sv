@@ -63,13 +63,15 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	virtual task run_phase(uvm_phase phase);
 	 super.run_phase(phase);
 		forever begin
-		 pci_mon2sb_export_fifo.get(pci_act_trans);
-		 if(pci_act_trans==null) $stop;
-		 pci_act_trans_fifo.push_back(pci_act_trans);
-		 pci_rm2sb_export_fifo.get(pci_exp_trans);
-		 if(pci_exp_trans==null) $stop;
-		 pci_exp_trans_fifo.push_back(pci_exp_trans);
-		 compare_trans();
+			pci_mon2sb_export_fifo.get(pci_act_trans);
+			if(pci_act_trans==null) $stop;
+			pci_act_trans_fifo.push_back(pci_act_trans);
+			pci_rm2sb_export_fifo.get(pci_exp_trans);
+			if(pci_exp_trans==null) $stop;
+			pci_exp_trans_fifo.push_back(pci_exp_trans);
+			`uvm_info(get_full_name(),$sformatf("compare_trans"),UVM_LOW);
+
+		 	compare_trans();
 		end
 	endtask
 	///////////////////////////////////////////////////////////////////////////////

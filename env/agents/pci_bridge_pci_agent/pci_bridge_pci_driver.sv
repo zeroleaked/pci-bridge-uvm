@@ -50,6 +50,7 @@ class pci_bridge_pci_driver extends uvm_driver #(pci_bridge_pci_transaction);
 			$cast(rsp,req.clone());
 			rsp.set_id_info(req);
 			drv2rm_port.write(rsp);
+			`uvm_info(get_full_name(),$sformatf("SEND TO REF MODEL"),UVM_LOW);
 			seq_item_port.item_done();
 			seq_item_port.put(rsp);
 		end

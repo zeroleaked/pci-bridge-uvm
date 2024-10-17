@@ -30,7 +30,6 @@ class pci_bridge_wb_agent extends uvm_agent;
   // Description : connect tlm ports ande exports (ex: analysis port/exports) 
   ///////////////////////////////////////////////////////////////////////////////
   function void connect_phase(uvm_phase phase);
-      driver.seq_item_port.connect(sequencer.seq_item_export);
   endfunction : connect_phase
  
 endclass : pci_bridge_wb_agent

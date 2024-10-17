@@ -52,12 +52,19 @@ class pci_bridge_wb_monitor extends uvm_monitor;
 	// Method name : check_reset_propagation
 	// Description : Check Wishbone-specific reset conditions
 	///////////////////////////////////////////////////////////////////////////////
+	bit reset = 0;
 	function void check_reset_propagation();
-	if (vif.rc_cb.RST_O == 1) begin
-		`uvm_info("WB_MONITOR", "Wishbone reset detected", UVM_LOW)
-		act_trans.operation = pci_bridge_wb_transaction::RESET;
-	end
-  endfunction
+		if (!reset & (vif.rc_cb.RST_O == 1)) begin
+			`uvm_info("WB_MONITOR", "Wishbone reset on", UVM_LOW)
+			act_trans.operation = pci_bridge_wb_transaction::RESET;
+			reset = 1;
+		end
+		else if (reset & (vif.rc_cb.RST_O == 0)) begin
+			`uvm_info("WB_MONITOR", "Wishbone reset off", UVM_LOW)
+			act_trans.operation = pci_bridge_wb_transaction::NORMAL;
+			reset = 0;
+		end
+  	endfunction
 
 endclass : pci_bridge_wb_monitor
 

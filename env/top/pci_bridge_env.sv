@@ -48,12 +48,14 @@ class pci_bridge_environment extends uvm_env;
 		wb_agent.monitor.mon2sb_port.connect(sb.wb_mon2sb_export);
 
 		// connect ref
-		ref_model.rm2sb_port.connect(coverage.analysis_export);
+		ref_model.pci_rm2sb_port.connect(coverage.analysis_export);
 		pci_agent.driver.drv2rm_port.connect(ref_model.pci_rm_export);
-		wb_agent.driver.drv2rm_port.connect(ref_model.wb_rm_export);
-		ref_model.rm2sb_port.connect(sb.rm2sb_export);
-	endfunction : connect_phase
+		ref_model.pci_rm2sb_port.connect(sb.pci_rm2sb_export);
 
+		// ref_model.wb_rm2sb_port.connect(coverage.wb_analysis_export);
+		// wb_agent.driver.drv2rm_port.connect(ref_model.wb_rm_export);
+		ref_model.wb_rm2sb_port.connect(sb.wb_rm2sb_export);
+	endfunction : connect_phase
 endclass : pci_bridge_environment
 
 `endif

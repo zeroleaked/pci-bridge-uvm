@@ -51,7 +51,6 @@ class pci_bridge_ref_model extends uvm_component;
 	task run_phase(uvm_phase phase);
 		forever begin
 			pci_rm_exp_fifo.get(pci_rm_trans);
-			wb_rm_exp_fifo.get(wb_rm_trans);
 			get_expected_transaction(pci_rm_trans);
 		end
 	endtask
