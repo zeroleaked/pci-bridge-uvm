@@ -62,9 +62,9 @@ class pci_bridge_ref_model extends uvm_component;
 		this.pci_exp_trans = pci_rm_trans;
 		`uvm_info(get_full_name(),$sformatf("EXPECTED TRANSACTION FROM REF MODEL"),UVM_LOW);
 		pci_exp_trans.print();
-		if (pci_exp_trans.operation == pci_bridge_pci_transaction::RESET) begin
+		if (pci_exp_trans.is_reset == 1) begin
 			wb_exp_trans = pci_bridge_wb_transaction::type_id::create("wb_exp_trans");
-			wb_exp_trans.operation = pci_bridge_wb_transaction::RESET;
+			wb_exp_trans.is_reset = 1;
 			wb_rm2sb_port.write(wb_exp_trans);
 		end
 	endtask

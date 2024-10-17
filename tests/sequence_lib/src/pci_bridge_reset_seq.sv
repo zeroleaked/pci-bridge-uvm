@@ -21,7 +21,7 @@ class pci_bridge_reset_seq extends uvm_sequence#(pci_bridge_pci_transaction);
 	virtual task body();
 		req = pci_bridge_pci_transaction::type_id::create("req");
 		start_item(req);
-		req.operation = pci_bridge_pci_transaction::RESET;
+		req.is_reset = 1;
 		finish_item(req);
 		get_response(rsp);
 	endtask

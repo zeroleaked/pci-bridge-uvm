@@ -84,8 +84,8 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 			 wb_exp_trans = wb_exp_trans_fifo.pop_front();
 				if(wb_act_trans_fifo.size!=0) begin
 					wb_act_trans = wb_act_trans_fifo.pop_front();
-					`uvm_info(get_full_name(),$sformatf("expected operation = %s , actual operation = %s ",wb_exp_trans.operation.name(),wb_act_trans.operation.name()),UVM_LOW);
-					if(wb_act_trans.operation == pci_bridge_wb_transaction::RESET) begin
+					`uvm_info(get_full_name(),$sformatf("expected is_reset = %s , actual is_reset = %s ",wb_exp_trans.is_reset,wb_act_trans.is_reset),UVM_LOW);
+					if(wb_act_trans.is_reset == 1) begin
 						 `uvm_info(get_full_name(),$sformatf("Reset propagated"),UVM_LOW);
 					end else begin
 						 `uvm_error(get_full_name(),$sformatf("Reset conditions not met"));

@@ -45,7 +45,7 @@ class pci_bridge_pci_monitor extends uvm_monitor;
 		forever begin
 			@(vif.rc_cb);
 			if (vif.rc_cb.RST) begin
-				act_trans.operation = pci_bridge_pci_transaction::RESET;
+				act_trans.is_reset = 1;
 				mon2sb_port.write(act_trans);
 			end
 		end

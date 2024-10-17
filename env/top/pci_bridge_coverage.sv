@@ -14,9 +14,9 @@ pci_bridge_pci_transaction pci_cov_trans;
 covergroup pci_cg;
 	 option.per_instance=1;
 
-	PCI_OPERATION:	coverpoint pci_cov_trans.operation { 
-					bins reset	= {pci_bridge_pci_transaction::RESET};
-					bins normal = {pci_bridge_pci_transaction::NORMAL};
+	PCI_OPERATION:	coverpoint pci_cov_trans.is_reset { 
+					bins reset	= {1};
+					bins normal = {0};
 				}
 
 endgroup
