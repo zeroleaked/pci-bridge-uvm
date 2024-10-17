@@ -10,6 +10,7 @@ package pci_bridge_env_pkg;
    // importing packages : agent,ref model, register ...
    /////////////////////////////////////////////////////////
    import pci_bridge_pci_agent_pkg::*;
+   import pci_bridge_wb_agent_pkg::*;
    import pci_bridge_ref_model_pkg::*;
 
    //////////////////////////////////////////////////////////
