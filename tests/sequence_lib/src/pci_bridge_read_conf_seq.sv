@@ -20,10 +20,10 @@ class pci_bridge_read_conf_seq extends uvm_sequence#(pci_bridge_pci_transaction)
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
 		req = pci_bridge_pci_transaction::type_id::create("req");
-		for (bit [31:0] test_address = 32'h800;
-			test_address < 32'h840; test_address += 4) begin
+		for (bit [31:0] test_address = 32'h0;
+			test_address < 32'h40; test_address += 4) begin
 				start_item(req);
-				assert(!req.randomize() with {
+				assert(req.randomize() with {
 					is_reset == 0;
 					is_write == 0;
 					address == test_address;
