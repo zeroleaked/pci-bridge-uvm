@@ -50,6 +50,7 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	///////////////////////////////////////////////////////////////////////////////
 	function void connect_phase(uvm_phase phase);
 		super.connect_phase(phase);
+
 		pci_rm2sb_export.connect(pci_rm2sb_export_fifo.analysis_export);
 		pci_mon2sb_export.connect(pci_mon2sb_export_fifo.analysis_export);
 
@@ -63,15 +64,27 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	virtual task run_phase(uvm_phase phase);
 	 super.run_phase(phase);
 		forever begin
+			pci_mon2sb_export_fifo.get(pci_act_trans);
 			wb_mon2sb_export_fifo.get(wb_act_trans);
-			if(wb_act_trans==null) $stop;
-			wb_act_trans_fifo.push_back(wb_act_trans);
-			wb_rm2sb_export_fifo.get(wb_exp_trans);
-			if(wb_exp_trans==null) $stop;
-			wb_exp_trans_fifo.push_back(wb_exp_trans);
-			`uvm_info(get_full_name(),$sformatf("compare_trans"),UVM_LOW);
 
-		 	compare_trans();
+			if (pci_act_trans != null) begin
+				pci_act_trans_fifo.push_back(pci_act_trans);
+
+				pci_act_trans = pci_act_trans_fifo.pop_front();
+				`uvm_info(get_full_name(),$sformatf("sb rx pci trans"),UVM_LOW);
+				pci_act_trans.print();
+				pci_act_trans = null;
+			end
+
+			if (wb_act_trans != null) begin
+				wb_act_trans_fifo.push_back(wb_act_trans);
+				
+				wb_act_trans = wb_act_trans_fifo.pop_front();
+				`uvm_info(get_full_name(),$sformatf("sb rx wb trans"),UVM_LOW);
+				wb_act_trans.print();
+				wb_act_trans = null;
+			end
+		 	// compare_trans();
 		end
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
