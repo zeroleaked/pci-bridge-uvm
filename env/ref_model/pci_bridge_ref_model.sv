@@ -60,13 +60,36 @@ class pci_bridge_ref_model extends uvm_component;
 	//////////////////////////////////////////////////////////////////////////////
 	task get_expected_transaction(pci_bridge_pci_transaction pci_rm_trans);
 		this.pci_exp_trans = pci_rm_trans;
-		`uvm_info(get_full_name(),$sformatf("EXPECTED TRANSACTION FROM REF MODEL"),UVM_LOW);
-		pci_exp_trans.print();
+		// reset
 		if (pci_exp_trans.is_reset == 1) begin
 			wb_exp_trans = pci_bridge_wb_transaction::type_id::create("wb_exp_trans");
 			wb_exp_trans.is_reset = 1;
 			wb_rm2sb_port.write(wb_exp_trans);
 		end
+		// read config
+		else if (!pci_exp_trans.is_write) begin
+			bit [31:0] initial_config_regs [0:15] = {
+				32'h00011895,
+				32'h02800000,
+				32'h06800001,
+				32'h00000000,
+				32'h00000000,
+				32'h00000001,
+				32'h00000000,
+				32'h00000000,
+				32'h00000000,
+				32'h00000000,
+				32'h00000000,
+				32'h00011895,
+				32'h00000000,
+				32'h00000000,
+				32'h00000000,
+				32'h1a080100};
+			pci_exp_trans.data = initial_config_regs[pci_exp_trans.address[31:2]];
+		end
+
+		`uvm_info(get_full_name(),$sformatf("EXPECTED TRANSACTION FROM REF MODEL"),UVM_LOW);
+		pci_exp_trans.print();
 	endtask
 
 endclass

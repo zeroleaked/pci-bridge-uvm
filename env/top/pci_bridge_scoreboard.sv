@@ -64,16 +64,15 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	virtual task run_phase(uvm_phase phase);
 	 super.run_phase(phase);
 		forever begin
-			pci_mon2sb_export_fifo.get(pci_act_trans);
-			wb_mon2sb_export_fifo.get(wb_act_trans);
+			fork
+				pci_mon2sb_export_fifo.get(pci_act_trans);
+				wb_mon2sb_export_fifo.get(wb_act_trans);
+			join_any
+			disable fork;			
 
 			if (pci_act_trans != null) begin
 				pci_act_trans_fifo.push_back(pci_act_trans);
-
-				pci_act_trans = pci_act_trans_fifo.pop_front();
-				`uvm_info(get_full_name(),$sformatf("sb rx pci trans"),UVM_LOW);
-				pci_act_trans.print();
-				pci_act_trans = null;
+				pci_compare_trans();
 			end
 
 			if (wb_act_trans != null) begin
@@ -87,6 +86,18 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 		 	// compare_trans();
 		end
 	endtask
+
+	task pci_compare_trans();
+		pci_bridge_pci_transaction pci_exp_trans,pci_act_trans;
+
+		pci_act_trans = pci_act_trans_fifo.pop_front();
+		`uvm_info(get_full_name(),$sformatf("sb rx pci act trans"),UVM_LOW);
+		pci_act_trans.print();
+		// pci_exp_trans = pci_exp_trans_fifo.pop_front();
+		// `uvm_info(get_full_name(),$sformatf("sb rx pci exp trans"),UVM_LOW);
+		// pci_exp_trans.print();
+	endtask
+
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : compare_trans 
 	// Description : comparing expected and actual transactions
