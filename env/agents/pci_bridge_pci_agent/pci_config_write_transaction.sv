@@ -1,0 +1,28 @@
+`ifndef PCI_CONFIG_WRITE_TRANSACTION 
+`define PCI_CONFIG_WRITE_TRANSACTION
+
+class pci_config_write_transaction extends pci_config_transaction;
+	//////////////////////////////////////////////////////////////////////////////
+	//Declaration of Utility and Field macros,
+	//////////////////////////////////////////////////////////////////////////////
+	`uvm_object_utils(pci_config_write_transaction)
+	//////////////////////////////////////////////////////////////////////////////
+	//Constructor
+	//////////////////////////////////////////////////////////////////////////////
+	function new(string name = "pci_config_write_transaction");
+		super.new(name);
+		is_write = 1;
+		command = 4'b1011; // Config Write command
+	endfunction
+	//////////////////////////////////////////////////////////////////////////////
+	// Method name : drive_data_phase();
+	// Description : PCI data phase of write cycle
+	//////////////////////////////////////////////////////////////////////////////
+	task drive_data_phase(virtual pci_bridge_pci_interface vif);
+		vif.dr_cb.IRDY <= 1'b0; // Assert IRDY#
+		vif.dr_cb.AD <= data; // Drive write data
+		vif.dr_cb.CBE <= 4'b0000; // All byte enables active
+	endtask
+endclass
+
+`endif
