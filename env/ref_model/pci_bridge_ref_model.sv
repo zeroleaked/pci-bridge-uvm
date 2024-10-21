@@ -86,10 +86,8 @@ class pci_bridge_ref_model extends uvm_component;
 				32'h00000000,
 				32'h1a080100};
 			pci_exp_trans.data = initial_config_regs[pci_exp_trans.address[31:2]];
+			pci_rm2sb_port.write(pci_exp_trans);
 		end
-
-		`uvm_info(get_full_name(),$sformatf("EXPECTED TRANSACTION FROM REF MODEL"),UVM_LOW);
-		pci_exp_trans.print();
 	endtask
 
 endclass
