@@ -1,116 +1,106 @@
 `ifndef PCI_BRIDGE_SCOREBOARD 
 `define PCI_BRIDGE_SCOREBOARD
 
+`uvm_analysis_imp_decl(_pci_exp)
+`uvm_analysis_imp_decl(_pci_act)
+`uvm_analysis_imp_decl(_wb_exp)
+`uvm_analysis_imp_decl(_wb_act)
+
 class pci_bridge_scoreboard extends uvm_scoreboard;
- 
-	///////////////////////////////////////////////////////////////////////////////
-	// Declaration of component utils
-	///////////////////////////////////////////////////////////////////////////////
 	`uvm_component_utils(pci_bridge_scoreboard)
-	///////////////////////////////////////////////////////////////////////////////
-	// Declaration of Analysis ports and exports 
-	///////////////////////////////////////////////////////////////////////////////
-	uvm_analysis_export#(pci_bridge_pci_transaction) pci_rm2sb_export,pci_mon2sb_export;
-	uvm_tlm_analysis_fifo#(pci_bridge_pci_transaction) pci_rm2sb_export_fifo,pci_mon2sb_export_fifo;
-	pci_bridge_pci_transaction pci_exp_trans,pci_act_trans;
-	pci_bridge_pci_transaction pci_exp_trans_fifo[$],pci_act_trans_fifo[$];
 
-	uvm_analysis_export#(pci_bridge_wb_transaction) wb_rm2sb_export,wb_mon2sb_export;
-	uvm_tlm_analysis_fifo#(pci_bridge_wb_transaction) wb_rm2sb_export_fifo,wb_mon2sb_export_fifo;
-	pci_bridge_wb_transaction wb_exp_trans,wb_act_trans;
-	pci_bridge_wb_transaction wb_exp_trans_fifo[$],wb_act_trans_fifo[$];
+	// Analysis imports
+	uvm_analysis_imp_pci_exp #(pci_bridge_pci_transaction, pci_bridge_scoreboard) pci_exp_imp;
+	uvm_analysis_imp_pci_act #(pci_bridge_pci_transaction, pci_bridge_scoreboard) pci_act_imp;
+	uvm_analysis_imp_wb_exp #(pci_bridge_wb_transaction, pci_bridge_scoreboard) wb_exp_imp;
+	uvm_analysis_imp_wb_act #(pci_bridge_wb_transaction, pci_bridge_scoreboard) wb_act_imp;
 
+	// Transaction queues
+	pci_bridge_pci_transaction pci_exp_queue[$], pci_act_queue[$];
+	pci_bridge_wb_transaction wb_exp_queue[$], wb_act_queue[$];
+
+	// Error flag
 	bit error;
-	///////////////////////////////////////////////////////////////////////////////
-	// Method name : new
-	// Description : Constructor 
-	///////////////////////////////////////////////////////////////////////////////
-	function new (string name, uvm_component parent);
+
+	function new(string name, uvm_component parent);
 		super.new(name, parent);
 	endfunction : new
-	///////////////////////////////////////////////////////////////////////////////
-	// Method name : build phase 
-	// Description : Constructor 
-	///////////////////////////////////////////////////////////////////////////////
+
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		pci_rm2sb_export = new("pci_rm2sb_export", this);
-		pci_mon2sb_export = new("pci_mon2sb_export", this);
-		pci_rm2sb_export_fifo = new("pci_rm2sb_export_fifo", this);
-		pci_mon2sb_export_fifo = new("pci_mon2sb_export_fifo", this);
-
-		wb_rm2sb_export = new("wb_rm2sb_export", this);
-		wb_mon2sb_export = new("wb_mon2sb_export", this);
-		wb_rm2sb_export_fifo = new("wb_rm2sb_export_fifo", this);
-		wb_mon2sb_export_fifo = new("wb_mon2sb_export_fifo", this);
+		pci_exp_imp = new("pci_exp_imp", this);
+		pci_act_imp = new("pci_act_imp", this);
+		wb_exp_imp = new("wb_exp_imp", this);
+		wb_act_imp = new("wb_act_imp", this);
 	endfunction: build_phase
-		///////////////////////////////////////////////////////////////////////////////
-	// Method name : build phase 
-	// Description : Constructor 
-	///////////////////////////////////////////////////////////////////////////////
-	function void connect_phase(uvm_phase phase);
-		super.connect_phase(phase);
-		pci_rm2sb_export.connect(pci_rm2sb_export_fifo.analysis_export);
-		pci_mon2sb_export.connect(pci_mon2sb_export_fifo.analysis_export);
 
-		wb_rm2sb_export.connect(wb_rm2sb_export_fifo.analysis_export);
-		wb_mon2sb_export.connect(wb_mon2sb_export_fifo.analysis_export);
-	endfunction: connect_phase
-	///////////////////////////////////////////////////////////////////////////////
-	// Method name : run 
-	// Description : comparing expected and actual transactions
-	///////////////////////////////////////////////////////////////////////////////
-	virtual task run_phase(uvm_phase phase);
-	 super.run_phase(phase);
+	// Analysis port write implementations
+	function void write_pci_exp(pci_bridge_pci_transaction trans);
+		pci_exp_queue.push_back(trans);
+	endfunction: write_pci_exp
+
+	function void write_pci_act(pci_bridge_pci_transaction trans);
+		pci_act_queue.push_back(trans);
+	endfunction: write_pci_act
+
+	function void write_wb_exp(pci_bridge_wb_transaction trans);
+		wb_exp_queue.push_back(trans);
+	endfunction: write_wb_exp
+
+	function void write_wb_act(pci_bridge_wb_transaction trans);
+		wb_act_queue.push_back(trans);
+	endfunction: write_wb_act
+
+	task run_phase(uvm_phase phase);
+		super.run_phase(phase);
 		forever begin
-			wb_mon2sb_export_fifo.get(wb_act_trans);
-			if(wb_act_trans==null) $stop;
-			wb_act_trans_fifo.push_back(wb_act_trans);
-			wb_rm2sb_export_fifo.get(wb_exp_trans);
-			if(wb_exp_trans==null) $stop;
-			wb_exp_trans_fifo.push_back(wb_exp_trans);
-			`uvm_info(get_full_name(),$sformatf("compare_trans"),UVM_LOW);
-
-		 	compare_trans();
+			#1; // Allow time for transactions to arrive
+			if (pci_exp_queue.size() > 0 && pci_act_queue.size() > 0) begin
+				compare_pci_trans();
+			end
+			if (wb_exp_queue.size() > 0 && wb_act_queue.size() > 0) begin
+				compare_wb_trans();
+			end
 		end
 	endtask
-	///////////////////////////////////////////////////////////////////////////////
-	// Method name : compare_trans 
-	// Description : comparing expected and actual transactions
-	///////////////////////////////////////////////////////////////////////////////
-	task compare_trans();
-		 pci_bridge_wb_transaction wb_exp_trans,wb_act_trans;
-		 if(wb_exp_trans_fifo.size!=0) begin
-			 wb_exp_trans = wb_exp_trans_fifo.pop_front();
-				if(wb_act_trans_fifo.size!=0) begin
-					wb_act_trans = wb_act_trans_fifo.pop_front();
-					`uvm_info(get_full_name(),$sformatf("expected operation = %s , actual operation = %s ",wb_exp_trans.operation.name(),wb_act_trans.operation.name()),UVM_LOW);
-					if(wb_act_trans.operation == pci_bridge_wb_transaction::RESET) begin
-						 `uvm_info(get_full_name(),$sformatf("Reset propagated"),UVM_LOW);
-					end else begin
-						 `uvm_error(get_full_name(),$sformatf("Reset conditions not met"));
-						 error=1;
-					end
-				end
-			end
-	endtask
-	///////////////////////////////////////////////////////////////////////////////
-	// Method name : report 
-	// Description : Report the testcase status PASS/FAIL
-	///////////////////////////////////////////////////////////////////////////////
-	function void report_phase(uvm_phase phase);
-		if(error==0) begin
-			$write("%c[7;32m",27);
-			$display("-------------------------------------------------");
-			$display("------ INFO : TEST CASE PASSED ------------------");
-			$display("-----------------------------------------");
-			$write("%c[0m",27);
+
+	task compare_pci_trans();
+		pci_bridge_pci_transaction exp_trans, act_trans;
+		
+		exp_trans = pci_exp_queue.pop_front();
+		act_trans = pci_act_queue.pop_front();
+
+		`uvm_info(get_type_name(), $sformatf("Comparing PCI transactions:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()), UVM_LOW)
+
+		if (!exp_trans.compare(act_trans)) begin
+			`uvm_error(get_type_name(), $sformatf("PCI transaction mismatch:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()))
+			error = 1;
 		end else begin
-			$write("%c[7;31m",27);
-			$display("---------------------------------------------------");
-			$display("------ ERROR : TEST CASE FAILED ------------------");
-			$display("---------------------------------------------------");
-			$write("%c[0m",27);
+			`uvm_info(get_type_name(), "PCI transaction match", UVM_LOW)
+		end
+	endtask
+
+	task compare_wb_trans();
+		pci_bridge_wb_transaction exp_trans, act_trans;
+		
+		exp_trans = wb_exp_queue.pop_front();
+		act_trans = wb_act_queue.pop_front();
+
+		`uvm_info(get_type_name(), $sformatf("Comparing WB transactions:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()), UVM_LOW)
+
+		if (!exp_trans.compare(act_trans)) begin
+			`uvm_error(get_type_name(), $sformatf("WB transaction mismatch:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()))
+			error = 1;
+		end else begin
+			`uvm_info(get_type_name(), "WB transaction match", UVM_LOW)
+		end
+	endtask	
+
+	function void report_phase(uvm_phase phase);
+		if (error == 0) begin
+			`uvm_info(get_type_name(), "TEST CASE PASSED", UVM_LOW)
+		end else begin
+			`uvm_error(get_type_name(), "TEST CASE FAILED")
 		end
 	endfunction 
 endclass : pci_bridge_scoreboard

@@ -39,12 +39,8 @@ class pci_bridge_pci_driver extends uvm_driver #(pci_bridge_pci_transaction);
 	virtual task run_phase(uvm_phase phase);
 		forever begin
 			seq_item_port.get_next_item(req);
-			case (req.operation)
-				pci_bridge_pci_transaction::RESET: reset();
-			endcase
-			// log
-			`uvm_info(get_full_name(),$sformatf("TRANSACTION FROM DRIVER"),UVM_LOW);
-			req.print();
+			if (req.is_reset) reset();
+			else if (!req.is_write) read();
 			@(vif.dr_cb);
 			// driver to reference model
 			$cast(rsp,req.clone());
@@ -59,9 +55,49 @@ class pci_bridge_pci_driver extends uvm_driver #(pci_bridge_pci_transaction);
 	// Description : reset DUT
 	//////////////////////////////////////////////////////////////////////////////
 	task reset();
+		// Signals driven by the initiator
+		vif.dr_cb.RST    <= 1'b1;    // Active low, so set to inactive
+		vif.dr_cb.GNT    <= 1'b1;    // Active low, so set to inactive
+		vif.dr_cb.IDSEL  <= 1'b0;    // Typically low when inactive
+		vif.dr_cb.CBE    <= 4'b1111; // All byte enables inactive
+
+		// Bidirectional signals set to high-impedance when not driven
+		vif.dr_cb.AD     <= 32'bz;
+		vif.dr_cb.PAR    <= 1'bz;
+		vif.dr_cb.PERR   <= 1'bz;    
+
+		// Driven by target
+		vif.dr_cb.DEVSEL <= 1'bz;
+		vif.dr_cb.TRDY   <= 1'bz;
+		vif.dr_cb.STOP   <= 1'bz;
+		vif.dr_cb.INTA   <= 1'bz;
+
 		vif.dr_cb.RST <= 1'b0;
-		repeat(5) @(posedge vif.dr_cb);
+		repeat(5) @(vif.dr_cb);
 		vif.dr_cb.RST <= 1'b1;
+		repeat(100) @(vif.dr_cb);
+	endtask
+	//////////////////////////////////////////////////////////////////////////////
+	// Method name : read
+	// Description : simple read to DUT
+	//////////////////////////////////////////////////////////////////////////////
+	task read();
+		// address phase
+		vif.dr_cb.AD <= req.address;
+		vif.dr_cb.CBE <= 4'b1010; // config read
+		vif.dr_cb.FRAME <= 1'b0;
+		vif.dr_cb.IDSEL <= 1'b1;
+		@(vif.dr_cb);
+
+		// data phase
+		vif.dr_cb.AD <= 32'bz;
+		vif.dr_cb.CBE <= 4'b0000;
+		vif.dr_cb.FRAME <= 1'b1;
+		vif.dr_cb.IRDY <= 1'b0;
+
+		// wait for target to assert DEVSEL# and TRDY#
+		wait(!vif.dr_cb.DEVSEL && !vif.dr_cb.TRDY);
+		@(vif.dr_cb);
 	endtask
 
 endclass : pci_bridge_pci_driver

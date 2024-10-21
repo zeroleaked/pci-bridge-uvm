@@ -42,10 +42,21 @@ class pci_bridge_pci_monitor extends uvm_monitor;
 	// Description : Extract the info from DUT via interface 
 	///////////////////////////////////////////////////////////////////////////////
 	virtual task run_phase(uvm_phase phase);
+		bit reset = 0;
 		forever begin
 			@(vif.rc_cb);
-			if (vif.rc_cb.RST) begin
-				act_trans.operation = pci_bridge_pci_transaction::RESET;
+			if (!vif.rc_cb.RST & !reset) begin
+				act_trans.is_reset = 1;
+				mon2sb_port.write(act_trans);
+
+				reset = 1;
+			end
+			else if (vif.rc_cb.RST & reset) reset = 0;
+			else if (!vif.rc_cb.FRAME) begin
+				act_trans.is_reset = 0;
+				act_trans.address = vif.rc_cb.AD;
+				wait(!vif.dr_cb.DEVSEL && !vif.dr_cb.TRDY);
+				act_trans.data = vif.rc_cb.AD;
 				mon2sb_port.write(act_trans);
 			end
 		end

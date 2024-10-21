@@ -44,17 +44,17 @@ class pci_bridge_environment extends uvm_env;
 		super.connect_phase(phase);
 		
 		// monitor to scoreboard
-		pci_agent.monitor.mon2sb_port.connect(sb.pci_mon2sb_export);
-		wb_agent.monitor.mon2sb_port.connect(sb.wb_mon2sb_export);
+		pci_agent.monitor.mon2sb_port.connect(sb.pci_act_imp);
+		wb_agent.monitor.mon2sb_port.connect(sb.wb_act_imp);
 
 		// connect ref
 		ref_model.pci_rm2sb_port.connect(coverage.analysis_export);
 		pci_agent.driver.drv2rm_port.connect(ref_model.pci_rm_export);
-		ref_model.pci_rm2sb_port.connect(sb.pci_rm2sb_export);
+		ref_model.pci_rm2sb_port.connect(sb.pci_exp_imp);
 
 		// ref_model.wb_rm2sb_port.connect(coverage.wb_analysis_export);
 		// wb_agent.driver.drv2rm_port.connect(ref_model.wb_rm_export);
-		ref_model.wb_rm2sb_port.connect(sb.wb_rm2sb_export);
+		ref_model.wb_rm2sb_port.connect(sb.wb_exp_imp);
 	endfunction : connect_phase
 endclass : pci_bridge_environment
 

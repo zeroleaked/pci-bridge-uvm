@@ -16,6 +16,7 @@ package pci_bridge_seq_list;
  //////////////////////////////////////////////////////////////////////////////
 
  `include "pci_bridge_reset_seq.sv"
+ `include "pci_bridge_read_conf_seq.sv"
 
 endpackage
 

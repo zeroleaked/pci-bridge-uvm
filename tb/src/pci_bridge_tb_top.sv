@@ -37,6 +37,14 @@ module pci_bridge_tb_top;
 	/*********************pci_bridge DUT Instantation **********************************/
 	//////////////////////////////////////////////////////////////////////////////
 
+	pullup(pci_intf.FRAME);
+	pullup(pci_intf.IRDY);
+	pullup(pci_intf.TRDY);
+	pullup(pci_intf.STOP);
+	pullup(pci_intf.DEVSEL);
+	pullup(pci_intf.PERR);
+	pullup(pci_intf.SERR);
+	pullup(pci_intf.INTA);
 
 	TOP dut_inst(
 		// PCI

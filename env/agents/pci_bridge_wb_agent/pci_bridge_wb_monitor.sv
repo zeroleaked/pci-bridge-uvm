@@ -59,7 +59,7 @@ class pci_bridge_wb_monitor extends uvm_monitor;
 		end
 		else if (reset & (vif.rc_cb.RST_O == 0)) begin
 			`uvm_info("WB_MONITOR", "Wishbone reset off", UVM_LOW)
-			act_trans.operation = pci_bridge_wb_transaction::RESET;
+			act_trans.is_reset = 1;
 			mon2sb_port.write(act_trans);
 			reset = 0;
 		end
