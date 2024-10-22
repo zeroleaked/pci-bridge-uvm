@@ -1,8 +1,7 @@
-`ifndef PCI_BRIDGE_PCI_MONITOR 
-`define PCI_BRIDGE_PCI_MONITOR
+`ifndef PCI_CONFIG_MONITOR 
+`define PCI_CONFIG_MONITOR
 
-class pci_bridge_pci_monitor extends uvm_monitor;
-
+class pci_config_monitor extends uvm_monitor;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Virtual interface
 	///////////////////////////////////////////////////////////////////////////////
@@ -10,22 +9,22 @@ class pci_bridge_pci_monitor extends uvm_monitor;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Analysis ports and exports 
 	///////////////////////////////////////////////////////////////////////////////
-	uvm_analysis_port #(pci_bridge_pci_transaction) mon2sb_port;
+	uvm_analysis_port #(pci_config_transaction) mon2sb_port;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of transaction item 
 	///////////////////////////////////////////////////////////////////////////////
-	pci_bridge_pci_transaction act_trans;
+	pci_config_transaction tx;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of component	utils 
 	///////////////////////////////////////////////////////////////////////////////
-	`uvm_component_utils(pci_bridge_pci_monitor)
+	`uvm_component_utils(pci_config_monitor)
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new 
 	// Description : constructor
 	///////////////////////////////////////////////////////////////////////////////
 	function new (string name, uvm_component parent);
 		super.new(name, parent);
-		act_trans = new();
+		tx = new();
 		mon2sb_port = new("mon2sb_port", this);
 	endfunction : new
 	///////////////////////////////////////////////////////////////////////////////
@@ -42,26 +41,50 @@ class pci_bridge_pci_monitor extends uvm_monitor;
 	// Description : Extract the info from DUT via interface 
 	///////////////////////////////////////////////////////////////////////////////
 	virtual task run_phase(uvm_phase phase);
-		bit reset = 0;
 		forever begin
-			@(vif.rc_cb);
-			if (!vif.rc_cb.RST & !reset) begin
-				act_trans.is_reset = 1;
-				mon2sb_port.write(act_trans);
-
-				reset = 1;
-			end
-			else if (vif.rc_cb.RST & reset) reset = 0;
-			else if (!vif.rc_cb.FRAME) begin
-				act_trans.is_reset = 0;
-				act_trans.address = vif.rc_cb.AD;
-				wait(!vif.dr_cb.DEVSEL && !vif.dr_cb.TRDY);
-				act_trans.data = vif.rc_cb.AD;
-				mon2sb_port.write(act_trans);
-			end
+			wait(!vif.rc_cb.FRAME); // Wait for start of transaction
+			collect_transaction();
 		end
 	endtask : run_phase
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : collect_transaction 
+	// Description : Main collection task
+	///////////////////////////////////////////////////////////////////////////////
+	task collect_transaction();
+		bit [31:0] addr;
 
-endclass : pci_bridge_pci_monitor
+		collect_address_phase();
+		if (tx == null) return;
+		
+		collect_data_phase();
+
+		mon2sb_port.write(tx);
+	endtask
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : collect_address_phase 
+	// Description : Collect address phase information
+	///////////////////////////////////////////////////////////////////////////////
+	task collect_address_phase();
+		bit [3:0] command = vif.rc_cb.CBE;
+		case (command)
+			4'b1010: tx = pci_config_read_transaction::type_id::create("tx");
+			4'b1011: tx = pci_config_write_transaction::type_id::create("tx");
+			default: tx = null;
+		endcase
+		tx.command = command;
+		tx.address = vif.rc_cb.AD;
+		@(vif.rc_cb); // Wait for next clock
+	endtask
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : collect_data_phase 
+	// Description : Monitor data phase
+	///////////////////////////////////////////////////////////////////////////////
+	task collect_data_phase();
+		// Wait for target ready
+		wait(!vif.rc_cb.DEVSEL && !vif.rc_cb.TRDY);
+		tx.data = vif.rc_cb.AD;
+		@(vif.rc_cb); // Wait for next clock
+	endtask
+endclass : pci_config_monitor
 
 `endif

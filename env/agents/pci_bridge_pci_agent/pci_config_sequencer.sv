@@ -1,9 +1,9 @@
-`ifndef PCI_BRIDGE_PCI_SEQUENCER
-`define PCI_BRIDGE_PCI_SEQUENCER
+`ifndef PCI_CONFIG_SEQUENCER
+`define PCI_CONFIG_SEQUENCER
 
-class pci_bridge_pci_sequencer extends uvm_sequencer#(pci_bridge_pci_transaction);
+class pci_config_sequencer extends uvm_sequencer#(pci_config_transaction);
  
-  `uvm_component_utils(pci_bridge_pci_sequencer)
+  `uvm_component_utils(pci_config_sequencer)
  
   ///////////////////////////////////////////////////////////////////////////////
   //constructor

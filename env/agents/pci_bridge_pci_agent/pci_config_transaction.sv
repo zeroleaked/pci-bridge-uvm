@@ -1,45 +1,38 @@
-`ifndef PCI_BRIGE_PCI_TRANSACTION 
-`define PCI_BRIGE_PCI_TRANSACTION
+`ifndef PCI_CONFIG_TRANSACTION 
+`define PCI_CONFIG_TRANSACTION
 
-class pci_bridge_pci_transaction extends uvm_sequence_item;
+class pci_config_transaction extends uvm_sequence_item;
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of transaction fields
 	//////////////////////////////////////////////////////////////////////////////
-	rand bit is_reset;
 	rand bit [31:0] address;
+	rand bit [3:0] command;
 	rand bit [31:0] data;
-	rand bit is_write;
 	//////////////////////////////////////////////////////////////////////////////
 	//Declaration of Utility and Field macros,
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_object_utils_begin(pci_bridge_pci_transaction)
-		`uvm_field_int(is_reset, UVM_ALL_ON)
+	`uvm_object_utils_begin(pci_config_transaction)
 		`uvm_field_int(address, UVM_ALL_ON)
+		`uvm_field_int(command, UVM_ALL_ON)
 		`uvm_field_int(data, UVM_ALL_ON)
-		`uvm_field_int(is_write, UVM_ALL_ON)
 	`uvm_object_utils_end
 	//////////////////////////////////////////////////////////////////////////////
 	//Constructor
 	//////////////////////////////////////////////////////////////////////////////
-	function new(string name = "pci_bridge_pci_transaction");
+	function new(string name = "pci_config_transaction");
 		super.new(name);
 	endfunction
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of Constraints
 	//////////////////////////////////////////////////////////////////////////////
-	constraint valid_address {
-		address[1:0] == 2'b00; // 32-bit aligned addresses
-	}
-	//////////////////////////////////////////////////////////////////////////////
-	// Method name : post_randomize();
-	// Description : To display transaction info after randomization
-	//////////////////////////////////////////////////////////////////////////////
-	function void post_randomize();
-	endfunction	
-	 
+	constraint address_c { address[1:0] == 2'b00; }
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : is_write 
+	// Description : check if is_write
+	///////////////////////////////////////////////////////////////////////////////
+	function bit is_write();
+		return command[0];
+	endfunction
 endclass
 
-
 `endif
-
-

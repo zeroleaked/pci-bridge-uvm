@@ -1,17 +1,17 @@
-`ifndef PCI_BRIDGE_PCI_AGENT 
-`define PCI_BRIDGE_PCI_AGENT
+`ifndef PCI_CONFIG_AGENT 
+`define PCI_CONFIG_AGENT
 
-class pci_bridge_pci_agent extends uvm_agent;
+class pci_config_agent extends uvm_agent;
   ///////////////////////////////////////////////////////////////////////////////
   // Declaration of UVC components such as.. driver,monitor,sequencer..etc
   ///////////////////////////////////////////////////////////////////////////////
-  pci_bridge_pci_driver    driver;
-  pci_bridge_pci_sequencer sequencer;
-  pci_bridge_pci_monitor   monitor;
+  pci_config_driver    driver;
+  pci_config_sequencer sequencer;
+  pci_config_monitor monitor;
   ///////////////////////////////////////////////////////////////////////////////
   // Declaration of component utils 
   ///////////////////////////////////////////////////////////////////////////////
-  `uvm_component_utils(pci_bridge_pci_agent)
+  `uvm_component_utils(pci_config_agent)
   ///////////////////////////////////////////////////////////////////////////////
   // Method name : new 
   // Description : constructor
@@ -25,9 +25,9 @@ class pci_bridge_pci_agent extends uvm_agent;
   ///////////////////////////////////////////////////////////////////////////////
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    driver = pci_bridge_pci_driver::type_id::create("driver", this);
-    sequencer = pci_bridge_pci_sequencer::type_id::create("sequencer", this);
-    monitor = pci_bridge_pci_monitor::type_id::create("monitor", this);
+    driver = pci_config_driver::type_id::create("driver", this);
+    sequencer = pci_config_sequencer::type_id::create("sequencer", this);
+    monitor = pci_config_monitor::type_id::create("monitor", this);
   endfunction : build_phase
   ///////////////////////////////////////////////////////////////////////////////
   // Method name : connect_phase 
@@ -37,6 +37,6 @@ class pci_bridge_pci_agent extends uvm_agent;
       driver.seq_item_port.connect(sequencer.seq_item_export);
   endfunction : connect_phase
  
-endclass : pci_bridge_pci_agent
+endclass : pci_config_agent
 
 `endif
