@@ -1,16 +1,26 @@
-`ifndef PCI_CONFIG_TRANSACTION 
-`define PCI_CONFIG_TRANSACTION
+`ifndef PCI_TRANSACTION 
+`define PCI_TRANSACTION
 
-class pci_config_transaction extends pci_transaction;
+class pci_transaction extends uvm_sequence_item;
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of transaction fields
 	//////////////////////////////////////////////////////////////////////////////
-	rand bit [7:0] reg_addr;
+	typedef enum bit [3:0] {
+		CFG_READ  = 4'b1010,
+		CFG_WRITE = 4'b1011,
+		MEM_READ  = 4'b0110,
+		MEM_WRITE = 4'b0111
+	} pci_cmd_t;
+	rand pci_cmd_t command;
+	rand bit [31:0] address;
+	rand bit [31:0] data;
 	//////////////////////////////////////////////////////////////////////////////
 	//Declaration of Utility and Field macros,
 	//////////////////////////////////////////////////////////////////////////////
 	`uvm_object_utils_begin(pci_config_transaction)
-		`uvm_field_int(reg_addr, UVM_ALL_ON)
+    	`uvm_field_enum(pci_cmd_t, command, UVM_ALL_ON)
+		`uvm_field_int(address, UVM_ALL_ON)
+		`uvm_field_int(data, UVM_ALL_ON)
 	`uvm_object_utils_end
 	//////////////////////////////////////////////////////////////////////////////
 	//Constructor
@@ -21,14 +31,13 @@ class pci_config_transaction extends pci_transaction;
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of Constraints
 	//////////////////////////////////////////////////////////////////////////////
-	constraint reg_addr_dword_c { reg_addr[1:0] == 2'b00; }
-	constraint reg_addr_256_c { reg_addr < 8'h40; }
-	constraint cfg_cmd_only { command inside {CFG_READ, CFG_WRITE}; }
-	constraint addr_mapping {
-		address[7:0]   == reg_addr;      // Register number
-		address[10:8]  == 0;             // Function number (assuming single function)
-		address[31:11] == 0;             // Upper bits must be 0 for type 0
-	}
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : is_write 
+	// Description : check if is_write
+	///////////////////////////////////////////////////////////////////////////////
+	function bit is_write();
+		return command[0];
+	endfunction
 endclass
 
 `endif

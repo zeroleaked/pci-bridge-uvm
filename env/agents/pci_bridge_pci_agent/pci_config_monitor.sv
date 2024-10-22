@@ -77,7 +77,9 @@ class pci_config_monitor extends uvm_monitor;
 			end
 			default: tx = null;
 		endcase
+		tx.address = vif.rc_cb.AD;
 		tx.reg_addr = vif.rc_cb.AD[7:0];
+
 		@(vif.rc_cb); // Wait for next clock
 	endtask
 	///////////////////////////////////////////////////////////////////////////////

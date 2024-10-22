@@ -72,8 +72,6 @@ class pci_bridge_ref_model extends uvm_component;
 			get_expected_transaction(pci_rm_trans);
 			pci_rm2sb_port.write(pci_exp_trans);
 
-			// `uvm_info(get_type_name(), "rm tx", UVM_LOW)
-			// pci_exp_trans.print();
 		end
 	endtask
 	//////////////////////////////////////////////////////////////////////////////
