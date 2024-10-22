@@ -36,6 +36,7 @@ class pci_bridge_rw_conf_test extends uvm_test;
 			read_conf_seq.start(env.pci_agent.sequencer);
     		`uvm_info(get_type_name(), "read sequence completed", UVM_LOW)
 		phase.drop_objection(this);
+		phase.phase_done.set_drain_time(this, 1000ns);
 	endtask : run_phase
  
 endclass : pci_bridge_rw_conf_test

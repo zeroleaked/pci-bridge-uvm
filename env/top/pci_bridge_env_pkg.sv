@@ -11,7 +11,7 @@ package pci_bridge_env_pkg;
    /////////////////////////////////////////////////////////
    import pci_bridge_pci_agent_pkg::*;
    import pci_bridge_wb_agent_pkg::*;
-//    import pci_bridge_ref_model_pkg::*;
+   import pci_bridge_ref_model_pkg::*;
 
    //////////////////////////////////////////////////////////
    // include top env files 

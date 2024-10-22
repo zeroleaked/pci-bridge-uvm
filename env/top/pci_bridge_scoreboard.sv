@@ -1,13 +1,13 @@
 `ifndef PCI_BRIDGE_SCOREBOARD 
 `define PCI_BRIDGE_SCOREBOARD
 
-`uvm_analysis_imp_decl(_pci_exp)
-`uvm_analysis_imp_decl(_pci_act)
-`uvm_analysis_imp_decl(_wb_exp)
-`uvm_analysis_imp_decl(_wb_act)
-
 class pci_bridge_scoreboard extends uvm_scoreboard;
 	`uvm_component_utils(pci_bridge_scoreboard)
+
+	`uvm_analysis_imp_decl(_pci_exp)
+	`uvm_analysis_imp_decl(_pci_act)
+	`uvm_analysis_imp_decl(_wb_exp)
+	`uvm_analysis_imp_decl(_wb_act)
 
 	// Analysis imports
 	uvm_analysis_imp_pci_exp #(pci_config_transaction, pci_bridge_scoreboard) pci_exp_imp;
@@ -54,7 +54,11 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	task run_phase(uvm_phase phase);
 		super.run_phase(phase);
 		forever begin
-			#1; // Allow time for transactions to arrive
+			// `uvm_info(get_type_name(), $sformatf("exp_q:%d act_q:%d", pci_exp_queue.size(), pci_act_queue.size()), UVM_LOW)
+			// Wait for either PCI or WB transactions to be available
+			wait((pci_exp_queue.size() > 0 && pci_act_queue.size() > 0) ||
+					(wb_exp_queue.size() > 0 && wb_act_queue.size() > 0));
+			
 			if (pci_exp_queue.size() > 0 && pci_act_queue.size() > 0) begin
 				compare_pci_trans();
 			end
