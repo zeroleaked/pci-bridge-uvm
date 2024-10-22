@@ -74,7 +74,7 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 		exp_trans = pci_exp_queue.pop_front();
 		act_trans = pci_act_queue.pop_front();
 
-		`uvm_info(get_type_name(), $sformatf("Comparing PCI transactions:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()), UVM_LOW)
+		// `uvm_info(get_type_name(), $sformatf("Comparing PCI transactions:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()), UVM_LOW)
 
 		if (!exp_trans.compare(act_trans)) begin
 			`uvm_error(get_type_name(), $sformatf("PCI transaction mismatch:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()))
