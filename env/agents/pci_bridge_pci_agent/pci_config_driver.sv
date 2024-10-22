@@ -41,8 +41,8 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 		reset();
 		forever begin
 			seq_item_port.get_next_item(req);
-			`uvm_info(get_type_name(), "driver rx", UVM_LOW)
-			req.print();
+			// `uvm_info(get_type_name(), "driver rx", UVM_LOW)
+			// req.print();
 			drive_transaction(req);
 			// if (req.is_reset) reset();
 			// else if (!req.is_write) read();
@@ -53,7 +53,6 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 			drv2rm_port.write(rsp);
 			seq_item_port.item_done();
 			seq_item_port.put(rsp);
-			`uvm_info(get_type_name(), "driver rsp", UVM_LOW)
 		end
 	endtask : run_phase
 
@@ -67,7 +66,6 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 	endtask
 
 	task drive_address_phase(pci_config_transaction tx);
-		tx.print();
 		vif.dr_cb.FRAME <= 1'b0;  // Assert FRAME#
 		vif.dr_cb.IDSEL <= 1'b1;  // Assert IDSEL
 		vif.dr_cb.AD <= tx.address;  // Send register address

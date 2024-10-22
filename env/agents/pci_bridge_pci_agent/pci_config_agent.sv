@@ -7,6 +7,7 @@ class pci_config_agent extends uvm_agent;
   ///////////////////////////////////////////////////////////////////////////////
   pci_config_driver    driver;
   pci_config_sequencer sequencer;
+  pci_config_monitor monitor;
   ///////////////////////////////////////////////////////////////////////////////
   // Declaration of component utils 
   ///////////////////////////////////////////////////////////////////////////////
@@ -26,6 +27,7 @@ class pci_config_agent extends uvm_agent;
     super.build_phase(phase);
     driver = pci_config_driver::type_id::create("driver", this);
     sequencer = pci_config_sequencer::type_id::create("sequencer", this);
+    monitor = pci_config_monitor::type_id::create("monitor", this);
   endfunction : build_phase
   ///////////////////////////////////////////////////////////////////////////////
   // Method name : connect_phase 
