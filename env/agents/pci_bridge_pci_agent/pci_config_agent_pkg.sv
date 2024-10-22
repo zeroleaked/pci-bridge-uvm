@@ -19,12 +19,6 @@ package pci_bridge_pci_agent_pkg;
 	`include "pci_config_monitor.sv"
 	`include "pci_config_agent.sv"
 
-	// `include "pci_bridge_pci_transaction.sv"
-	// `include "pci_bridge_pci_sequencer.sv"
-	// `include "pci_bridge_pci_driver.sv"
-	// `include "pci_bridge_pci_monitor.sv"
-	// `include "pci_bridge_pci_agent.sv"
-
 endpackage
 
 `endif

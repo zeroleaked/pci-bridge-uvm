@@ -19,8 +19,10 @@ class pci_config_write_seq extends uvm_sequence#(pci_config_transaction);
 	// sequencer to driver
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
-		do_config_write(32'h00000804, 32'h00000007);
-		do_config_write(32'h00000810, 32'h10000000);
+		// turn on I/O Space (0) and Memory Space (1) accesses, turn on bus master (2) 
+		do_config_write(32'h00000004, 32'h00000007);
+		// set base address to 1000_0000
+		do_config_write(32'h00000010, 32'h10000000);
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_config_write 
