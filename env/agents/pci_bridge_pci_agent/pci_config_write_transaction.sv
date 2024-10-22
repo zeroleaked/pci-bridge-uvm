@@ -15,14 +15,10 @@ class pci_config_write_transaction extends pci_config_transaction;
 		command = 4'b1011; // Config Write command
 	endfunction
 	//////////////////////////////////////////////////////////////////////////////
-	// Method name : drive_data_phase();
-	// Description : PCI data phase of write cycle
+	// Declaration of Constraints
 	//////////////////////////////////////////////////////////////////////////////
-	task drive_data_phase(virtual pci_bridge_pci_interface vif);
-		vif.dr_cb.IRDY <= 1'b0; // Assert IRDY#
-		vif.dr_cb.AD <= data; // Drive write data
-		vif.dr_cb.CBE <= 4'b0000; // All byte enables active
-	endtask
+	constraint command_c { command == 4'b1011; }
+	constraint is_write_c { is_write == 1; }
 endclass
 
 `endif

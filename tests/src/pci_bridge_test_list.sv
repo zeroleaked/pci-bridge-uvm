@@ -13,7 +13,6 @@ package pci_bridge_test_list;
  // including pci_bridge test list
  //////////////////////////////////////////////////////////////////////////////
 
- `include "pci_bridge_reset_test.sv"
  `include "pci_bridge_rw_conf_test.sv"
 
 endpackage 

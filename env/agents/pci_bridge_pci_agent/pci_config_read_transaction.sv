@@ -11,25 +11,12 @@ class pci_config_read_transaction extends pci_config_transaction;
 	//////////////////////////////////////////////////////////////////////////////
 	function new(string name = "pci_config_read_transaction");
 		super.new(name);
-		is_write = 0;
-		command = 4'b1010;	// Config Read command
 	endfunction
 	//////////////////////////////////////////////////////////////////////////////
-	// Method name : drive_data_phase();
-	// Description : PCI data phase of read cycle
+	// Declaration of Constraints
 	//////////////////////////////////////////////////////////////////////////////
-	task drive_data_phase(virtual pci_bridge_pci_interface vif);
-		vif.dr_cb.IRDY <= 1'b0;	 // Assert IRDY#
-		vif.dr_cb.AD <= 32'bz;		// Release AD bus for target to drive
-		vif.dr_cb.CBE <= 4'b0000; // All byte enables active
-	endtask
-	//////////////////////////////////////////////////////////////////////////////
-	// Method name : collect_data();
-	// Description : PCI get data from port
-	//////////////////////////////////////////////////////////////////////////////
-	task collect_data(virtual pci_bridge_pci_interface vif);
-		data = vif.dr_cb.AD;
-	endtask
+	constraint command_c { command == 4'b1010; }
+	constraint is_write_c { is_write == 0; }
 endclass
 
 `endif
