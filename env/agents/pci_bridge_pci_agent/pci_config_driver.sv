@@ -71,7 +71,7 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 	task drive_address_phase(pci_config_transaction tx);
 		vif.dr_cb.FRAME <= 1'b0;  // Assert FRAME#
 		vif.dr_cb.IDSEL <= 1'b1;  // Assert IDSEL
-		vif.dr_cb.AD <= tx.address;  // Send register address
+		vif.dr_cb.AD <= {26'b0, tx.reg_addr};  // Send register address
 		vif.dr_cb.CBE <= tx.command; // Config Read or Write command
 		@(vif.dr_cb);
 		vif.dr_cb.FRAME <= 1'b1;  // Assert FRAME#

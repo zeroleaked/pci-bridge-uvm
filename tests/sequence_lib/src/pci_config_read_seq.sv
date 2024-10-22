@@ -20,11 +20,11 @@ class pci_config_read_seq extends uvm_sequence#(pci_config_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
 		req = pci_config_read_transaction::type_id::create("req");
-		for (bit [31:0] test_address = 32'h000;
-			test_address < 32'h040; test_address += 4) begin
+		for (bit [6:0] test_address = 7'h00;
+			test_address < 7'h40; test_address += 4) begin
 				start_item(req);
 				assert(req.randomize() with {
-					address == test_address;
+					reg_addr == test_address[5:0];
 				})
 				else `uvm_error("PCI_READ_SEQ", "Randomization failed")
 				finish_item(req);

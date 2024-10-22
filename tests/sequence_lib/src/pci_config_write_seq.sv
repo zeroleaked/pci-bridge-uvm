@@ -20,19 +20,19 @@ class pci_config_write_seq extends uvm_sequence#(pci_config_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
 		// turn on I/O Space (0) and Memory Space (1) accesses, turn on bus master (2) 
-		do_config_write(32'h00000004, 32'h00000007);
+		do_config_write(6'h04, 32'h00000007);
 		// set base address to 1000_0000
-		do_config_write(32'h00000010, 32'h10000000);
+		do_config_write(6'h10, 32'h10000000);
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_config_write 
 	// Description : Task to send a write transaction
 	//////////////////////////////////////////////////////////////////////////////
-	task do_config_write(input bit [31:0] req_address, input bit [31:0] req_data);
+	task do_config_write(input bit [5:0] req_address, input bit [31:0] req_data);
 		req = pci_config_write_transaction::type_id::create("req");
 		start_item(req);
 		assert(req.randomize() with {
-			address  == req_address;
+			reg_addr  == req_address;
 			data     == req_data;
 		})
 		else `uvm_error("PCI_CONFIG_WRITE_SEQ", "Randomization failed");
