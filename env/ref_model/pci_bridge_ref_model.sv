@@ -85,15 +85,15 @@ class pci_bridge_ref_model extends uvm_component;
 		// read config
 		if (pci_exp_trans.is_write()) begin
 			bit [31:0] new_data;
-			if (pci_exp_trans.reg_addr == 6'h4) begin
+			if (pci_exp_trans.reg_addr == 8'h04) begin
 				new_data = pci_exp_trans.data ^ config_space_regs[1];
 			end
 			else begin
 				new_data = pci_exp_trans.data;
 			end
-			config_space_regs[pci_exp_trans.reg_addr[5:2]] = new_data;
+			config_space_regs[pci_exp_trans.reg_addr[7:2]] = new_data;
 		end else begin
-			pci_exp_trans.data = config_space_regs[pci_exp_trans.reg_addr[5:2]];
+			pci_exp_trans.data = config_space_regs[pci_exp_trans.reg_addr[7:2]];
 		end
 	endtask
 
