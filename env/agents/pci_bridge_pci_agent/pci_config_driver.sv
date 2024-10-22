@@ -44,9 +44,6 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 			// `uvm_info(get_type_name(), "driver rx", UVM_LOW)
 			// req.print();
 			drive_transaction(req);
-			// if (req.is_reset) reset();
-			// else if (!req.is_write) read();
-			// @(vif.dr_cb);
 			// driver to reference model
 			$cast(rsp,req.clone());
 			rsp.set_id_info(req);
@@ -58,7 +55,7 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 
 	task drive_transaction(pci_config_transaction tx);
 		drive_address_phase(tx);
-		if (tx.is_write)
+		if (tx.is_write())
 			drive_data_phase_write(tx);
 		else
 			drive_data_phase_read(tx);

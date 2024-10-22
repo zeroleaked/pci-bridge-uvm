@@ -16,7 +16,6 @@ class pci_config_read_transaction extends pci_config_transaction;
 	// Declaration of Constraints
 	//////////////////////////////////////////////////////////////////////////////
 	constraint command_c { command == 4'b1010; }
-	constraint is_write_c { is_write == 0; }
 endclass
 
 `endif

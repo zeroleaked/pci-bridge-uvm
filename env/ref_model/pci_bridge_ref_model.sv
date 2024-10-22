@@ -61,7 +61,7 @@ class pci_bridge_ref_model extends uvm_component;
 	task get_expected_transaction(pci_config_transaction pci_rm_trans);
 		this.pci_exp_trans = pci_rm_trans;
 		// read config
-		if (!pci_exp_trans.is_write) begin
+		if (!pci_exp_trans.is_write()) begin
 			bit [31:0] initial_config_regs [0:15] = {
 				32'h00011895,
 				32'h02800000,

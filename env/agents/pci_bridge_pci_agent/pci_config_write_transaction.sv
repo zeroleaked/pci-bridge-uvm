@@ -11,14 +11,11 @@ class pci_config_write_transaction extends pci_config_transaction;
 	//////////////////////////////////////////////////////////////////////////////
 	function new(string name = "pci_config_write_transaction");
 		super.new(name);
-		is_write = 1;
-		command = 4'b1011; // Config Write command
 	endfunction
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of Constraints
 	//////////////////////////////////////////////////////////////////////////////
 	constraint command_c { command == 4'b1011; }
-	constraint is_write_c { is_write == 1; }
 endclass
 
 `endif

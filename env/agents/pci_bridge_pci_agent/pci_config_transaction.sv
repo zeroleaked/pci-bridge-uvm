@@ -8,7 +8,6 @@ class pci_config_transaction extends uvm_sequence_item;
 	rand bit [31:0] address;
 	rand bit [3:0] command;
 	rand bit [31:0] data;
-	rand bit is_write;
 	//////////////////////////////////////////////////////////////////////////////
 	//Declaration of Utility and Field macros,
 	//////////////////////////////////////////////////////////////////////////////
@@ -16,7 +15,6 @@ class pci_config_transaction extends uvm_sequence_item;
 		`uvm_field_int(address, UVM_ALL_ON)
 		`uvm_field_int(command, UVM_ALL_ON)
 		`uvm_field_int(data, UVM_ALL_ON)
-		`uvm_field_int(is_write, UVM_ALL_ON)
 	`uvm_object_utils_end
 	//////////////////////////////////////////////////////////////////////////////
 	//Constructor
@@ -28,6 +26,13 @@ class pci_config_transaction extends uvm_sequence_item;
 	// Declaration of Constraints
 	//////////////////////////////////////////////////////////////////////////////
 	constraint address_c { address[1:0] == 2'b00; }
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : is_write 
+	// Description : check if is_write
+	///////////////////////////////////////////////////////////////////////////////
+	function bit is_write();
+		return command[0];
+	endfunction
 endclass
 
 `endif
