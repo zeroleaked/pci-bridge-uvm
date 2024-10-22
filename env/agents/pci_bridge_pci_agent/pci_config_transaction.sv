@@ -6,15 +6,22 @@ class pci_config_transaction extends uvm_sequence_item;
 	// Declaration of transaction fields
 	//////////////////////////////////////////////////////////////////////////////
 	rand bit [7:0] reg_addr;
-	rand bit [3:0] command;
 	rand bit [31:0] data;
+
+	// Transaction type identifiers
+	typedef enum bit [3:0] {
+		CFG_READ  = 4'b1010,
+		CFG_WRITE = 4'b1011
+	} pci_cmd_t;
+
+	rand pci_cmd_t command;
 	//////////////////////////////////////////////////////////////////////////////
 	//Declaration of Utility and Field macros,
 	//////////////////////////////////////////////////////////////////////////////
 	`uvm_object_utils_begin(pci_config_transaction)
 		`uvm_field_int(reg_addr, UVM_ALL_ON)
-		`uvm_field_int(command, UVM_ALL_ON)
 		`uvm_field_int(data, UVM_ALL_ON)
+    	`uvm_field_enum(pci_cmd_t, command, UVM_ALL_ON)
 	`uvm_object_utils_end
 	//////////////////////////////////////////////////////////////////////////////
 	//Constructor
@@ -27,6 +34,7 @@ class pci_config_transaction extends uvm_sequence_item;
 	//////////////////////////////////////////////////////////////////////////////
 	constraint reg_addr_dword_c { reg_addr[1:0] == 2'b00; }
 	constraint reg_addr_256_c { reg_addr < 8'h40; }
+	constraint cfg_cmd_only { command inside {CFG_READ, CFG_WRITE}; }
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : is_write 
 	// Description : check if is_write

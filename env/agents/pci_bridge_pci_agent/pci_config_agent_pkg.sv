@@ -12,8 +12,6 @@ package pci_bridge_pci_agent_pkg;
 	// `include "pci_bridge_pci_defines.svh" use this for agent constants
 
 	`include "pci_config_transaction.sv"
-	`include "pci_config_read_transaction.sv"
-	`include "pci_config_write_transaction.sv"
 	`include "pci_config_sequencer.sv"
 	`include "pci_config_driver.sv"
 	`include "pci_config_monitor.sv"

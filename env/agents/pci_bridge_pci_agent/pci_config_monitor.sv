@@ -67,11 +67,16 @@ class pci_config_monitor extends uvm_monitor;
 	task collect_address_phase();
 		bit [3:0] command = vif.rc_cb.CBE;
 		case (command)
-			4'b1010: tx = pci_config_read_transaction::type_id::create("tx");
-			4'b1011: tx = pci_config_write_transaction::type_id::create("tx");
+			4'b1010: begin
+				tx = pci_config_transaction::type_id::create("tx");
+				tx.command = pci_config_transaction::CFG_READ;
+			end
+			4'b1011: begin
+				tx = pci_config_transaction::type_id::create("tx");
+				tx.command = pci_config_transaction::CFG_WRITE;
+			end
 			default: tx = null;
 		endcase
-		tx.command = command;
 		tx.reg_addr = vif.rc_cb.AD[7:0];
 		@(vif.rc_cb); // Wait for next clock
 	endtask

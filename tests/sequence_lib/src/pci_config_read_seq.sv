@@ -19,11 +19,12 @@ class pci_config_read_seq extends uvm_sequence#(pci_config_transaction);
 	// sequencer to driver
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
-		req = pci_config_read_transaction::type_id::create("req");
+		req = pci_config_transaction::type_id::create("req");
 		for (bit [7:0] test_address = 8'h00;
 			test_address < 8'h40; test_address += 4) begin
 				start_item(req);
 				assert(req.randomize() with {
+					command == pci_config_transaction::CFG_READ;
 					reg_addr == test_address;
 				})
 				else `uvm_error("PCI_READ_SEQ", "Randomization failed")

@@ -29,11 +29,12 @@ class pci_config_write_seq extends uvm_sequence#(pci_config_transaction);
 	// Description : Task to send a write transaction
 	//////////////////////////////////////////////////////////////////////////////
 	task do_config_write(input bit [5:0] req_address, input bit [31:0] req_data);
-		req = pci_config_write_transaction::type_id::create("req");
+		req = pci_config_transaction::type_id::create("req");
 		start_item(req);
 		assert(req.randomize() with {
-			reg_addr  == req_address;
-			data     == req_data;
+			command		== pci_config_transaction::CFG_WRITE;
+			reg_addr	== req_address;
+			data		== req_data;
 		})
 		else `uvm_error("PCI_CONFIG_WRITE_SEQ", "Randomization failed");
 		finish_item(req);

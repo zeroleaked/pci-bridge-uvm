@@ -56,14 +56,10 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 	task drive_transaction(pci_config_transaction tx);
 		drive_address_phase(tx);
 		if (tx.is_write()) begin
-			pci_config_write_transaction wr_tx;
-			$cast(wr_tx, tx);
-			drive_data_phase_write(wr_tx);
+			drive_data_phase_write(tx);
 		end
 		else begin
-			pci_config_read_transaction rd_tx;
-			$cast(rd_tx, tx);
-			drive_data_phase_read(rd_tx);
+			drive_data_phase_read(tx);
 		end
 		cleanup_transaction();
 	endtask
@@ -77,7 +73,7 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 		vif.dr_cb.FRAME <= 1'b1;  // Assert FRAME#
 	endtask
 
-	task drive_data_phase_read(pci_config_read_transaction tx);
+	task drive_data_phase_read(pci_config_transaction tx);
 		vif.dr_cb.IRDY <= 1'b0;   // Assert IRDY#
 		vif.dr_cb.AD <= 32'bz;    // Release AD bus
 		vif.dr_cb.CBE <= 4'b0000; // All byte enables active
@@ -87,7 +83,7 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 		vif.dr_cb.IRDY <= 1'b1;   // Deassert IRDY#
 	endtask
 
-	task drive_data_phase_write(pci_config_write_transaction tx);
+	task drive_data_phase_write(pci_config_transaction tx);
 		vif.dr_cb.IRDY <= 1'b0;   // Assert IRDY#
 		vif.dr_cb.AD <= tx.data;  // Drive data
 		vif.dr_cb.CBE <= 4'b0000; // All byte enables active
