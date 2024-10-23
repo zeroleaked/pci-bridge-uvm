@@ -20,9 +20,9 @@ class pci_memory_read_seq extends uvm_sequence#(pci_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
 		// Target scan registers (aside from PCI configuration space 0x000-0x0FF)
-		for (bit [7:0] test_address = 8'h00;
-		test_address < 8'hec; test_address += 4) begin
-			do_memory_read({{4'h1}, {20'h1}, {test_address}});
+		for (bit [7:0] register_address = 8'h00;
+		register_address < 8'hec; register_address += 3'b100) begin
+			do_memory_read(TAR0_BASE_ADDR_0 | register_address);
 		end
     	`uvm_info(get_type_name(), "read memory completed", UVM_LOW)
 	endtask

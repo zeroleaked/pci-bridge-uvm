@@ -3,6 +3,8 @@
 
 package pci_bridge_pkg;
 
+	parameter bit [31:0] TAR0_BASE_ADDR_0 = 32'h1000_0000;
+
 	// Register address definitions
 	typedef enum bit [11:0] {
 		// PCI Configuration Header Registers

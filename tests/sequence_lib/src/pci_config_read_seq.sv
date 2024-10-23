@@ -20,8 +20,8 @@ class pci_config_read_seq extends uvm_sequence#(pci_config_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
 		req = pci_config_transaction::type_id::create("req");
-		for (bit [7:0] test_address = 8'h00;
-			test_address < 8'h40; test_address += 4) begin
+		for (bit [7:0] test_address = VENDOR_DEVICE_ID;
+			test_address <= INT_INFO; test_address += 3'b100) begin
 				start_item(req);
 				assert(req.randomize() with {
 					command == CFG_READ;
