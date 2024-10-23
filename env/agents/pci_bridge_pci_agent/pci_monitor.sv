@@ -84,6 +84,7 @@ class pci_monitor extends uvm_monitor;
 		// Wait for target ready
 		wait(!vif.rc_cb.DEVSEL && !vif.rc_cb.TRDY);
 		tx.data = vif.rc_cb.AD;
+		tx.byte_en = vif.rc_cb.CBE;
 		@(vif.rc_cb); // Wait for next clock
 	endtask
 endclass : pci_monitor

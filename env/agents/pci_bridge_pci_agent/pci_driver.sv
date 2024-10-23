@@ -43,24 +43,16 @@ class pci_driver extends uvm_driver #(pci_transaction);
 			seq_item_port.get_next_item(req);
 			// `uvm_info(get_type_name(), "driver rx", UVM_LOW)
 			// req.print();
-			case (req.command)
-				4'b1010: begin
-					vif.dr_cb.IDSEL <= 1'b1;  // Assert IDSEL
-					drive_address_phase(req);
-					vif.dr_cb.AD <= 32'bz;    // Release AD bus
-					drive_data_phase(req);
-				end
-				4'b1011: begin
-					vif.dr_cb.IDSEL <= 1'b1;  // Assert IDSEL
-					drive_address_phase(req);
-					vif.dr_cb.AD <= req.data;  // Drive data
-					drive_data_phase(req);
-				end
-				// 4'b0110:  drive_mem_read(req);
-				// 4'b0111: drive_mem_write(req);
-				default: `uvm_error("PCI_DRIVER", "Invalid command type")
-			endcase
+			
+			if (req.is_config()) vif.dr_cb.IDSEL <= 1'b1;
+			drive_address_phase(req);
+
+			if (req.is_write()) vif.dr_cb.AD <= req.data;  // Drive data
+			else vif.dr_cb.AD <= 32'bz;    // Release AD bus
+			drive_data_phase(req);
+			
 			cleanup_transaction();
+			
 			// driver to reference model
 			$cast(rsp,req.clone());
 			rsp.set_id_info(req);
@@ -127,7 +119,7 @@ class pci_driver extends uvm_driver #(pci_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	task drive_data_phase(pci_transaction tx);
 		vif.dr_cb.IRDY <= 1'b0;   // Assert IRDY#
-		vif.dr_cb.CBE <= 4'b0000; // All byte enables active
+		vif.dr_cb.CBE <= tx.byte_en; // All byte enables active
 
 		wait(!vif.dr_cb.DEVSEL && !vif.dr_cb.TRDY);  // Wait for target
 		@(vif.dr_cb);
