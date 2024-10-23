@@ -40,6 +40,7 @@ class pci_config_write_seq extends uvm_sequence#(pci_config_transaction);
 		else `uvm_error("PCI_CONFIG_WRITE_SEQ", "Randomization failed");
 		finish_item(req);
 		get_response(rsp);
+    	`uvm_info(get_type_name(), "write sequence completed", UVM_LOW)
 	endtask
 
 endclass

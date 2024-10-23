@@ -32,6 +32,7 @@ class pci_config_read_seq extends uvm_sequence#(pci_config_transaction);
 				finish_item(req);
 				get_response(rsp);
 		end
+    	`uvm_info(get_type_name(), "read sequence completed", UVM_LOW)
 	endtask
 	 
 endclass

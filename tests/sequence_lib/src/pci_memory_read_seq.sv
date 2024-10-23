@@ -24,6 +24,7 @@ class pci_memory_read_seq extends uvm_sequence#(pci_transaction);
 		test_address < 8'hec; test_address += 4) begin
 			do_memory_read({{4'h1}, {20'h1}, {test_address}});
 		end
+    	`uvm_info(get_type_name(), "read memory completed", UVM_LOW)
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_config_write 
