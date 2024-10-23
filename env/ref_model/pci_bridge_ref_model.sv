@@ -17,28 +17,14 @@ class pci_bridge_ref_model extends uvm_component;
 	pci_bridge_wb_transaction wb_exp_trans,wb_rm_trans;
 	uvm_tlm_analysis_fifo#(pci_bridge_wb_transaction) wb_rm_exp_fifo;
 
-	bit [31:0] config_space_regs [0:15] = {
-		32'h00011895,
-		32'h02800000,
-		32'h06800001,
-		32'h00000000,
-		32'h00000000,
-		32'h00000001,
-		32'h00000000,
-		32'h00000000,
-		32'h00000000,
-		32'h00000000,
-		32'h00000000,
-		32'h00011895,
-		32'h00000000,
-		32'h00000000,
-		32'h00000000,
-		32'h1a080100};
+	protected pci_register_handler register_handler;
+
 	//////////////////////////////////////////////////////////////////////////////
 	//constructor
 	//////////////////////////////////////////////////////////////////////////////
 	function new(string name="pci_bridge_ref_model", uvm_component parent);
-		super.new(name,parent);
+		super.new(name, parent);
+		register_handler = pci_register_handler::type_id::create("register_handler");
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : build-phase 
@@ -65,7 +51,7 @@ class pci_bridge_ref_model extends uvm_component;
 	endfunction : connect_phase
 	//////////////////////////////////////////////////////////////////////////////
 	// Method name : run 
-	// Description : Driving the dut inputs
+	// Description : Process the dut inputs
 	//////////////////////////////////////////////////////////////////////////////
 	task run_phase(uvm_phase phase);
 		forever begin
@@ -78,40 +64,40 @@ class pci_bridge_ref_model extends uvm_component;
 	// Method name : get_expected_transaction 
 	// Description : Expected transaction 
 	//////////////////////////////////////////////////////////////////////////////
-	task get_expected_transaction(pci_transaction pci_rm_trans);
-		pci_exp_trans = pci_rm_trans;
-		// read config
+	task get_expected_transaction(pci_transaction trans);
+		pci_exp_trans = trans;
+		
 		if (pci_exp_trans.is_config()) begin
-			pci_config_transaction cfg_pci_exp_trans;
-			$cast(cfg_pci_exp_trans, pci_exp_trans);
-
-			if (cfg_pci_exp_trans.is_write()) begin
-				bit [31:0] new_data;
-				if (cfg_pci_exp_trans.reg_addr == 8'h04) begin
-					new_data = cfg_pci_exp_trans.data ^ config_space_regs[1];
-				end
-				else begin
-					new_data = cfg_pci_exp_trans.data;
-				end
-				config_space_regs[cfg_pci_exp_trans.reg_addr[7:2]] = new_data;
-			end else begin
-				cfg_pci_exp_trans.data = config_space_regs[cfg_pci_exp_trans.reg_addr[7:2]];
-			end
-
-			pci_exp_trans = cfg_pci_exp_trans;
+			process_config_transaction(pci_exp_trans);
 		end
+		else begin
+			if (pci_exp_trans.is_write())	
+				register_handler.write_config(pci_exp_trans.address[11:0], pci_exp_trans.data);
+			else
+				pci_exp_trans.data = register_handler.read_config(pci_exp_trans.address[11:0]);
+		end
+	endtask
+	//////////////////////////////////////////////////////////////////////////////
+	// Method name : process_config_transaction 
+	// Description : Handle configuration cycle transactions
+	//////////////////////////////////////////////////////////////////////////////
+	protected task process_config_transaction(pci_transaction trans);
+		pci_config_transaction cfg_trans;
+		
+		if (!$cast(cfg_trans, trans)) begin
+			`uvm_fatal("CAST_ERROR", "Failed to cast transaction to config type")
+			return;
+		end
+
+		if (cfg_trans.is_write()) begin
+			register_handler.write_config(cfg_trans.reg_addr, cfg_trans.data);
+		end else begin
+			cfg_trans.data = register_handler.read_config(cfg_trans.reg_addr);
+		end
+
+		pci_exp_trans = cfg_trans;
 	endtask
 
 endclass
 
 `endif
-
-
-
-
-
-
-
-
-
-

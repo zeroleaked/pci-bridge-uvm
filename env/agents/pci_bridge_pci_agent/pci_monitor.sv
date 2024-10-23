@@ -71,8 +71,9 @@ class pci_monitor extends uvm_monitor;
 			tx = pci_config_transaction::type_id::create("tx");
 			$cast(cfg_tx, tx);
 			cfg_tx.reg_addr = vif.rc_cb.AD[7:0];
-			$cast(cfg_tx.command, command);
 		end
+		else tx = pci_transaction::type_id::create("tx");
+		$cast(tx.command, command);
 		tx.address = vif.rc_cb.AD;
 		@(vif.rc_cb); // Wait for next clock
 	endtask

@@ -26,6 +26,7 @@ class pci_config_read_seq extends uvm_sequence#(pci_config_transaction);
 				assert(req.randomize() with {
 					command == CFG_READ;
 					reg_addr == test_address;
+					byte_en		== 4'h0;
 				})
 				else `uvm_error("PCI_READ_SEQ", "Randomization failed")
 				finish_item(req);

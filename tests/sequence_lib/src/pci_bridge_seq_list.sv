@@ -19,6 +19,7 @@ package pci_bridge_seq_list;
 //  `include "pci_bridge_read_conf_seq.sv"
  `include "pci_config_read_seq.sv"
  `include "pci_config_write_seq.sv"
+ `include "pci_memory_read_seq.sv"
 
 endpackage
 
