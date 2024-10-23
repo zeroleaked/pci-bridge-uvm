@@ -32,7 +32,7 @@ class pci_config_write_seq extends uvm_sequence#(pci_config_transaction);
 		req = pci_config_transaction::type_id::create("req");
 		start_item(req);
 		assert(req.randomize() with {
-			command		== pci_config_transaction::CFG_WRITE;
+			command		== CFG_WRITE;
 			reg_addr	== req_address;
 			data		== req_data;
 		})

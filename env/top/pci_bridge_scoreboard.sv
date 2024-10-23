@@ -10,8 +10,8 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	`uvm_analysis_imp_decl(_wb_act)
 
 	// Analysis imports
-	uvm_analysis_imp_pci_exp #(pci_config_transaction, pci_bridge_scoreboard) pci_exp_imp;
-	uvm_analysis_imp_pci_act #(pci_config_transaction, pci_bridge_scoreboard) pci_act_imp;
+	uvm_analysis_imp_pci_exp #(pci_transaction, pci_bridge_scoreboard) pci_exp_imp;
+	uvm_analysis_imp_pci_act #(pci_transaction, pci_bridge_scoreboard) pci_act_imp;
 	uvm_analysis_imp_wb_exp #(pci_bridge_wb_transaction, pci_bridge_scoreboard) wb_exp_imp;
 	uvm_analysis_imp_wb_act #(pci_bridge_wb_transaction, pci_bridge_scoreboard) wb_act_imp;
 
@@ -35,12 +35,16 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	endfunction: build_phase
 
 	// Analysis port write implementations
-	function void write_pci_exp(pci_config_transaction trans);
-		pci_exp_queue.push_back(trans);
+	function void write_pci_exp(pci_transaction trans);
+		pci_config_transaction temp_trans;
+		$cast(temp_trans, trans);
+		pci_exp_queue.push_back(temp_trans);
 	endfunction: write_pci_exp
 
-	function void write_pci_act(pci_config_transaction trans);
-		pci_act_queue.push_back(trans);
+	function void write_pci_act(pci_transaction trans);
+		pci_config_transaction temp_trans;
+		$cast(temp_trans, trans);
+		pci_act_queue.push_back(temp_trans);
 	endfunction: write_pci_act
 
 	function void write_wb_exp(pci_bridge_wb_transaction trans);

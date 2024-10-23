@@ -1,12 +1,12 @@
-`ifndef PCI_CONFIG_DRIVER
-`define PCI_CONFIG_DRIVER
+`ifndef PCI_DRIVER
+`define PCI_DRIVER
 
-class pci_config_driver extends uvm_driver #(pci_config_transaction);
+class pci_driver extends uvm_driver #(pci_transaction);
  
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of transaction item 
 	//////////////////////////////////////////////////////////////////////////////
-	pci_config_transaction trans;
+	pci_transaction trans;
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of Virtual interface 
 	//////////////////////////////////////////////////////////////////////////////
@@ -14,8 +14,8 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of component utils to register with factory 
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_component_utils(pci_config_driver)
-	uvm_analysis_port#(pci_config_transaction) drv2rm_port;
+	`uvm_component_utils(pci_driver)
+	uvm_analysis_port#(pci_transaction) drv2rm_port;
 	//////////////////////////////////////////////////////////////////////////////
 	// Constructor 
 	//////////////////////////////////////////////////////////////////////////////
@@ -37,13 +37,30 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 	// Description : Drive the transaction info to DUT
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task run_phase(uvm_phase phase);
-		pci_config_transaction req;
+		pci_transaction req;
 		reset();
 		forever begin
 			seq_item_port.get_next_item(req);
 			// `uvm_info(get_type_name(), "driver rx", UVM_LOW)
 			// req.print();
-			drive_transaction(req);
+			case (req.command)
+				4'b1010: begin
+					vif.dr_cb.IDSEL <= 1'b1;  // Assert IDSEL
+					drive_address_phase(req);
+					vif.dr_cb.AD <= 32'bz;    // Release AD bus
+					drive_data_phase(req);
+				end
+				4'b1011: begin
+					vif.dr_cb.IDSEL <= 1'b1;  // Assert IDSEL
+					drive_address_phase(req);
+					vif.dr_cb.AD <= req.data;  // Drive data
+					drive_data_phase(req);
+				end
+				// 4'b0110:  drive_mem_read(req);
+				// 4'b0111: drive_mem_write(req);
+				default: `uvm_error("PCI_DRIVER", "Invalid command type")
+			endcase
+			cleanup_transaction();
 			// driver to reference model
 			$cast(rsp,req.clone());
 			rsp.set_id_info(req);
@@ -52,51 +69,22 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 			seq_item_port.put(rsp);
 		end
 	endtask : run_phase
-
-	task drive_transaction(pci_config_transaction tx);
-		drive_address_phase(tx);
-		if (tx.is_write()) begin
-			drive_data_phase_write(tx);
-		end
-		else begin
-			drive_data_phase_read(tx);
-		end
+	//////////////////////////////////////////////////////////////////////////////
+	// Method name : reset 
+	// Description : reset DUT
+	//////////////////////////////////////////////////////////////////////////////
+	task reset();
 		cleanup_transaction();
+		vif.dr_cb.RST <= 1'b0;
+		repeat(5) @(vif.dr_cb);
+		vif.dr_cb.RST <= 1'b1;
+		repeat(100) @(vif.dr_cb);
 	endtask
-
-	task drive_address_phase(pci_config_transaction tx);
-		vif.dr_cb.FRAME <= 1'b0;  // Assert FRAME#
-		vif.dr_cb.IDSEL <= 1'b1;  // Assert IDSEL
-		vif.dr_cb.AD <= tx.address;  // Send register address
-		vif.dr_cb.CBE <= tx.command; // Config Read or Write command
-		@(vif.dr_cb);
-		vif.dr_cb.FRAME <= 1'b1;  // Assert FRAME#
-	endtask
-
-	task drive_data_phase_read(pci_config_transaction tx);
-		vif.dr_cb.IRDY <= 1'b0;   // Assert IRDY#
-		vif.dr_cb.AD <= 32'bz;    // Release AD bus
-		vif.dr_cb.CBE <= 4'b0000; // All byte enables active
-
-		wait(!vif.dr_cb.DEVSEL && !vif.dr_cb.TRDY);  // Wait for target
-		@(vif.dr_cb);
-		vif.dr_cb.IRDY <= 1'b1;   // Deassert IRDY#
-	endtask
-
-	task drive_data_phase_write(pci_config_transaction tx);
-		vif.dr_cb.IRDY <= 1'b0;   // Assert IRDY#
-		vif.dr_cb.AD <= tx.data;  // Drive data
-		vif.dr_cb.CBE <= 4'b0000; // All byte enables active
-
-		wait(!vif.dr_cb.DEVSEL && !vif.dr_cb.TRDY);  // Wait for target
-
-		@(vif.dr_cb);
-		vif.dr_cb.IRDY <= 1'b1;   // Deassert IRDY#
-	endtask
-
+	//////////////////////////////////////////////////////////////////////////////
+	// Method name : cleanup_transaction 
+	// Description : Reset signals to default states
+	//////////////////////////////////////////////////////////////////////////////
 	task cleanup_transaction();
-		// Reset signals to default states
-
 		// Signals driven by the initiator
 		vif.dr_cb.RST		<= 1'b1;    // Active low, so set to inactive
 		vif.dr_cb.GNT		<= 1'b1;    // Active low, so set to inactive
@@ -115,26 +103,36 @@ class pci_config_driver extends uvm_driver #(pci_config_transaction);
 		vif.dr_cb.STOP		<= 1'bz;
 		vif.dr_cb.INTA		<= 1'bz;
 	endtask
-
-
 	//////////////////////////////////////////////////////////////////////////////
-	// Method name : reset 
-	// Description : reset DUT
+	// Method name : wait_for_idle_bus 
+	// Description : Wait for PCI bus to be idle
 	//////////////////////////////////////////////////////////////////////////////
-	task reset();
-		cleanup_transaction();
-		vif.dr_cb.RST <= 1'b0;
-		repeat(5) @(vif.dr_cb);
-		vif.dr_cb.RST <= 1'b1;
-		repeat(100) @(vif.dr_cb);
+	task wait_for_idle_bus();
+		wait(vif.dr_cb.FRAME == 1 && vif.dr_cb.IRDY == 1 && vif.dr_cb.TRDY == 1);
 	endtask
-	
+	//////////////////////////////////////////////////////////////////////////////
+	// Method name : drive_address_phase 
+	// Description : Drive address phase
+	//////////////////////////////////////////////////////////////////////////////
+	task drive_address_phase(pci_transaction tx);
+		vif.dr_cb.FRAME <= 1'b0;  // Assert FRAME#
+		vif.dr_cb.AD <= tx.address;  // Send register address
+		vif.dr_cb.CBE <= tx.command; // Config Read or Write command
+		@(vif.dr_cb);
+		vif.dr_cb.FRAME <= 1'b1;  // Assert FRAME#
+	endtask
+	//////////////////////////////////////////////////////////////////////////////
+	// Method name : drive_data_phase 
+	// Description : Drive data phase
+	//////////////////////////////////////////////////////////////////////////////
+	task drive_data_phase(pci_transaction tx);
+		vif.dr_cb.IRDY <= 1'b0;   // Assert IRDY#
+		vif.dr_cb.CBE <= 4'b0000; // All byte enables active
 
-endclass : pci_config_driver
+		wait(!vif.dr_cb.DEVSEL && !vif.dr_cb.TRDY);  // Wait for target
+		@(vif.dr_cb);
+		vif.dr_cb.IRDY <= 1'b1;   // Deassert IRDY#
+	endtask
+endclass
 
 `endif
-
-
-
-
-

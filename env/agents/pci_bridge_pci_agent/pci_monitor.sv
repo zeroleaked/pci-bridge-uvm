@@ -1,7 +1,7 @@
-`ifndef PCI_CONFIG_MONITOR 
-`define PCI_CONFIG_MONITOR
+`ifndef PCI_MONITOR 
+`define PCI_MONITOR
 
-class pci_config_monitor extends uvm_monitor;
+class pci_monitor extends uvm_monitor;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Virtual interface
 	///////////////////////////////////////////////////////////////////////////////
@@ -9,15 +9,15 @@ class pci_config_monitor extends uvm_monitor;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Analysis ports and exports 
 	///////////////////////////////////////////////////////////////////////////////
-	uvm_analysis_port #(pci_config_transaction) mon2sb_port;
+	uvm_analysis_port #(pci_transaction) mon2sb_port;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of transaction item 
 	///////////////////////////////////////////////////////////////////////////////
-	pci_config_transaction tx;
+	pci_transaction tx;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of component	utils 
 	///////////////////////////////////////////////////////////////////////////////
-	`uvm_component_utils(pci_config_monitor)
+	`uvm_component_utils(pci_monitor)
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new 
 	// Description : constructor
@@ -65,21 +65,15 @@ class pci_config_monitor extends uvm_monitor;
 	// Description : Collect address phase information
 	///////////////////////////////////////////////////////////////////////////////
 	task collect_address_phase();
+		pci_config_transaction cfg_tx;
 		bit [3:0] command = vif.rc_cb.CBE;
-		case (command)
-			4'b1010: begin
-				tx = pci_config_transaction::type_id::create("tx");
-				tx.command = pci_config_transaction::CFG_READ;
-			end
-			4'b1011: begin
-				tx = pci_config_transaction::type_id::create("tx");
-				tx.command = pci_config_transaction::CFG_WRITE;
-			end
-			default: tx = null;
-		endcase
+		if (command[3:1] == 3'b101) begin
+			tx = pci_config_transaction::type_id::create("tx");
+			$cast(cfg_tx, tx);
+			cfg_tx.reg_addr = vif.rc_cb.AD[7:0];
+			$cast(cfg_tx.command, command);
+		end
 		tx.address = vif.rc_cb.AD;
-		tx.reg_addr = vif.rc_cb.AD[7:0];
-
 		@(vif.rc_cb); // Wait for next clock
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
@@ -92,6 +86,6 @@ class pci_config_monitor extends uvm_monitor;
 		tx.data = vif.rc_cb.AD;
 		@(vif.rc_cb); // Wait for next clock
 	endtask
-endclass : pci_config_monitor
+endclass : pci_monitor
 
 `endif

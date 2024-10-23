@@ -6,10 +6,11 @@ class pci_bridge_ref_model extends uvm_component;
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of Local Signals 
 	//////////////////////////////////////////////////////////////////////////////
-	uvm_analysis_export#(pci_config_transaction) pci_rm_export;
-	uvm_analysis_port#(pci_config_transaction) pci_rm2sb_port;
-	pci_config_transaction pci_exp_trans,pci_rm_trans;
-	uvm_tlm_analysis_fifo#(pci_config_transaction) pci_rm_exp_fifo;
+	uvm_analysis_export#(pci_transaction) pci_rm_export;
+	uvm_analysis_port#(pci_transaction) pci_rm2sb_port;
+	pci_transaction pci_exp_trans;
+	pci_transaction pci_rm_trans;
+	uvm_tlm_analysis_fifo#(pci_transaction) pci_rm_exp_fifo;
 
 	uvm_analysis_export#(pci_bridge_wb_transaction) wb_rm_export;
 	uvm_analysis_port#(pci_bridge_wb_transaction) wb_rm2sb_port;
@@ -71,27 +72,33 @@ class pci_bridge_ref_model extends uvm_component;
 			pci_rm_exp_fifo.get(pci_rm_trans);
 			get_expected_transaction(pci_rm_trans);
 			pci_rm2sb_port.write(pci_exp_trans);
-
 		end
 	endtask
 	//////////////////////////////////////////////////////////////////////////////
 	// Method name : get_expected_transaction 
 	// Description : Expected transaction 
 	//////////////////////////////////////////////////////////////////////////////
-	task get_expected_transaction(pci_config_transaction pci_rm_trans);
-		this.pci_exp_trans = pci_rm_trans;
+	task get_expected_transaction(pci_transaction pci_rm_trans);
+		pci_exp_trans = pci_rm_trans;
 		// read config
-		if (pci_exp_trans.is_write()) begin
-			bit [31:0] new_data;
-			if (pci_exp_trans.reg_addr == 8'h04) begin
-				new_data = pci_exp_trans.data ^ config_space_regs[1];
+		if (pci_exp_trans.is_config()) begin
+			pci_config_transaction cfg_pci_exp_trans;
+			$cast(cfg_pci_exp_trans, pci_exp_trans);
+
+			if (cfg_pci_exp_trans.is_write()) begin
+				bit [31:0] new_data;
+				if (cfg_pci_exp_trans.reg_addr == 8'h04) begin
+					new_data = cfg_pci_exp_trans.data ^ config_space_regs[1];
+				end
+				else begin
+					new_data = cfg_pci_exp_trans.data;
+				end
+				config_space_regs[cfg_pci_exp_trans.reg_addr[7:2]] = new_data;
+			end else begin
+				cfg_pci_exp_trans.data = config_space_regs[cfg_pci_exp_trans.reg_addr[7:2]];
 			end
-			else begin
-				new_data = pci_exp_trans.data;
-			end
-			config_space_regs[pci_exp_trans.reg_addr[7:2]] = new_data;
-		end else begin
-			pci_exp_trans.data = config_space_regs[pci_exp_trans.reg_addr[7:2]];
+
+			pci_exp_trans = cfg_pci_exp_trans;
 		end
 	endtask
 
