@@ -23,7 +23,7 @@ package pci_bridge_ref_model_register_pkg;
 	};
 
 	// Registers (0x100-0x1F0)
-	parameter bit [31:0] REGISTER_DEFAULTS [0:55] = '{
+	parameter bit [31:0] REGISTER_DEFAULTS [0:61] = '{
 		32'h00000000, // 0x100: P_IMG_CTRL0
 		32'h10000000, // 0x104: P_BA0 (extended)
 		32'hfffff000, // 0x108: P_AM0
@@ -51,6 +51,12 @@ package pci_bridge_ref_model_register_pkg;
 		32'h00000000, // 0x160: P_ERR_CS
 		32'h00000000, // 0x164: P_ERR_ADDR
 		32'h00000000, // 0x168: P_ERR_DATA
+		32'h00000000, // 0x168: reserved
+		32'h00000000, // 0x16C: reserved
+		32'h00000000, // 0x170: reserved
+		32'h00000000, // 0x174: reserved
+		32'h00000000, // 0x178: reserved
+		32'h00000000, // 0x17C: reserved
 		32'h00000000, // 0x180: WB_CONF_SPC_BAR
 		32'h00000000, // 0x184: W_IMG_CTRL1
 		32'h00000000, // 0x188: W_BA1
