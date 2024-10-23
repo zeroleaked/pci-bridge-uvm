@@ -69,11 +69,11 @@ class pci_config_monitor extends uvm_monitor;
 		case (command)
 			4'b1010: begin
 				tx = pci_config_transaction::type_id::create("tx");
-				tx.command = pci_config_transaction::CFG_READ;
+				tx.command = CFG_READ;
 			end
 			4'b1011: begin
 				tx = pci_config_transaction::type_id::create("tx");
-				tx.command = pci_config_transaction::CFG_WRITE;
+				tx.command = CFG_WRITE;
 			end
 			default: tx = null;
 		endcase
