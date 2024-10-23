@@ -101,10 +101,14 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	endtask	
 
 	function void report_phase(uvm_phase phase);
-		if (error == 0) begin
-			`uvm_info(get_type_name(), "TEST CASE PASSED", UVM_LOW)
+		if(error==0) begin
+			$display("-------------------------------------------------");
+			$display("------ INFO : TEST CASE PASSED ------------------");
+			$display("-----------------------------------------");
 		end else begin
-			`uvm_error(get_type_name(), "TEST CASE FAILED")
+			$display("---------------------------------------------------");
+			$display("------ ERROR : TEST CASE FAILED ------------------");
+			$display("---------------------------------------------------");
 		end
 	endfunction 
 endclass : pci_bridge_scoreboard
