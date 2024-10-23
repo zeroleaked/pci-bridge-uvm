@@ -6,7 +6,7 @@ class pci_bridge_environment extends uvm_env;
 	//////////////////////////////////////////////////////////////////////////////
 	//Declaration components
 	//////////////////////////////////////////////////////////////////////////////
-	pci_config_agent pci_agent;
+	pci_bridge_pci_agent pci_agent;
 	pci_bridge_wb_agent wb_agent;
 	pci_bridge_ref_model ref_model;
 	// pci_bridge_coverage#(pci_bridge_pci_transaction) coverage;
@@ -30,7 +30,7 @@ class pci_bridge_environment extends uvm_env;
 	//////////////////////////////////////////////////////////////////////////////
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		pci_agent = pci_config_agent::type_id::create("pci_config_agent", this);
+		pci_agent = pci_bridge_pci_agent::type_id::create("pci_bridge_pci_agent", this);
 		wb_agent = pci_bridge_wb_agent::type_id::create("pci_bridge_wb_agent", this);
 		ref_model = pci_bridge_ref_model::type_id::create("ref_model", this);
 		// coverage = pci_bridge_coverage#(pci_bridge_pci_transaction)::type_id::create("coverage", this);
