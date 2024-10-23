@@ -5,7 +5,7 @@ class pci_config_agent extends uvm_agent;
   ///////////////////////////////////////////////////////////////////////////////
   // Declaration of UVC components such as.. driver,monitor,sequencer..etc
   ///////////////////////////////////////////////////////////////////////////////
-  pci_config_driver    driver;
+  pci_driver driver;
   pci_config_sequencer sequencer;
   pci_config_monitor monitor;
   ///////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ class pci_config_agent extends uvm_agent;
   ///////////////////////////////////////////////////////////////////////////////
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    driver = pci_config_driver::type_id::create("driver", this);
+    driver = pci_driver::type_id::create("driver", this);
     sequencer = pci_config_sequencer::type_id::create("sequencer", this);
     monitor = pci_config_monitor::type_id::create("monitor", this);
   endfunction : build_phase

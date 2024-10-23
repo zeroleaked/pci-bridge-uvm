@@ -6,10 +6,11 @@ class pci_bridge_ref_model extends uvm_component;
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of Local Signals 
 	//////////////////////////////////////////////////////////////////////////////
-	uvm_analysis_export#(pci_config_transaction) pci_rm_export;
+	uvm_analysis_export#(pci_transaction) pci_rm_export;
 	uvm_analysis_port#(pci_config_transaction) pci_rm2sb_port;
-	pci_config_transaction pci_exp_trans,pci_rm_trans;
-	uvm_tlm_analysis_fifo#(pci_config_transaction) pci_rm_exp_fifo;
+	pci_config_transaction pci_exp_trans;
+	pci_transaction pci_rm_trans;
+	uvm_tlm_analysis_fifo#(pci_transaction) pci_rm_exp_fifo;
 
 	uvm_analysis_export#(pci_bridge_wb_transaction) wb_rm_export;
 	uvm_analysis_port#(pci_bridge_wb_transaction) wb_rm2sb_port;
@@ -67,9 +68,11 @@ class pci_bridge_ref_model extends uvm_component;
 	// Description : Driving the dut inputs
 	//////////////////////////////////////////////////////////////////////////////
 	task run_phase(uvm_phase phase);
+		pci_config_transaction temp_pci_rm_trans;
 		forever begin
 			pci_rm_exp_fifo.get(pci_rm_trans);
-			get_expected_transaction(pci_rm_trans);
+			$cast(temp_pci_rm_trans, pci_rm_trans);
+			get_expected_transaction(temp_pci_rm_trans);
 			pci_rm2sb_port.write(pci_exp_trans);
 
 		end
