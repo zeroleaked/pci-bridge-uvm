@@ -65,14 +65,8 @@ class pci_monitor extends uvm_monitor;
 	// Description : Collect address phase information
 	///////////////////////////////////////////////////////////////////////////////
 	task collect_address_phase();
-		pci_config_transaction cfg_tx;
 		bit [3:0] command = vif.rc_cb.CBE;
-		if (command[3:1] == 3'b101) begin
-			tx = pci_config_transaction::type_id::create("tx");
-			$cast(cfg_tx, tx);
-			cfg_tx.reg_addr = vif.rc_cb.AD[7:0];
-		end
-		else tx = pci_transaction::type_id::create("tx");
+		tx = pci_transaction::type_id::create("tx");
 		$cast(tx.command, command);
 		tx.address = vif.rc_cb.AD;
 		@(vif.rc_cb); // Wait for next clock

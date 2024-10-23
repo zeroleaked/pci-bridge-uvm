@@ -67,37 +67,11 @@ class pci_bridge_ref_model extends uvm_component;
 	task get_expected_transaction(pci_transaction trans);
 		pci_exp_trans = trans;
 		
-		if (pci_exp_trans.is_config()) begin
-			process_config_transaction(pci_exp_trans);
-		end
-		else begin
-			if (pci_exp_trans.is_write())	
-				register_handler.write_config(pci_exp_trans.address[11:0], pci_exp_trans.data);
-			else
-				pci_exp_trans.data = register_handler.read_config(pci_exp_trans.address[11:0]);
-		end
+		if (pci_exp_trans.is_write())	
+			register_handler.write_config(pci_exp_trans.address[11:0], pci_exp_trans.data);
+		else
+			pci_exp_trans.data = register_handler.read_config(pci_exp_trans.address[11:0]);
 	endtask
-	//////////////////////////////////////////////////////////////////////////////
-	// Method name : process_config_transaction 
-	// Description : Handle configuration cycle transactions
-	//////////////////////////////////////////////////////////////////////////////
-	protected task process_config_transaction(pci_transaction trans);
-		pci_config_transaction cfg_trans;
-		
-		if (!$cast(cfg_trans, trans)) begin
-			`uvm_fatal("CAST_ERROR", "Failed to cast transaction to config type")
-			return;
-		end
-
-		if (cfg_trans.is_write()) begin
-			register_handler.write_config(cfg_trans.reg_addr, cfg_trans.data);
-		end else begin
-			cfg_trans.data = register_handler.read_config(cfg_trans.reg_addr);
-		end
-
-		pci_exp_trans = cfg_trans;
-	endtask
-
 endclass
 
 `endif

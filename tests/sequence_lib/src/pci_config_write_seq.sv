@@ -1,6 +1,6 @@
 `ifndef PCI_CONFIG_WRITE_SEQ 
 `define PCI_CONFIG_WRITE_SEQ
-class pci_config_write_seq extends uvm_sequence#(pci_config_transaction);
+class pci_config_write_seq extends uvm_sequence#(pci_transaction);
 
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
@@ -29,11 +29,11 @@ class pci_config_write_seq extends uvm_sequence#(pci_config_transaction);
 	// Description : Task to send a write transaction
 	//////////////////////////////////////////////////////////////////////////////
 	task do_config_write(input bit [7:0] req_address, input bit [31:0] req_data);
-		req = pci_config_transaction::type_id::create("req");
+		req = pci_transaction::type_id::create("req");
 		start_item(req);
 		assert(req.randomize() with {
 			command		== CFG_WRITE;
-			reg_addr	== req_address;
+			address		== req_address;
 			data		== req_data;
 			byte_en		== 4'h0;
 		})
