@@ -19,8 +19,11 @@ class pci_memory_read_seq extends uvm_sequence#(pci_transaction);
 	// sequencer to driver
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
-		// Target BAR 0 scan registers (aside from PCI configuration space 0x000-0x0FF)
-		do_memory_read({{4'b0001}, {28'h100}});
+		// Target scan registers (aside from PCI configuration space 0x000-0x0FF)
+		for (bit [7:0] test_address = 8'h00;
+		test_address < 8'hec; test_address += 4) begin
+			do_memory_read({{4'h1}, {20'h1}, {test_address}});
+		end
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_config_write 
