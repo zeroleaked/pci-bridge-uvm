@@ -8,6 +8,7 @@ package pci_bridge_test_list;
 
  import pci_bridge_env_pkg::*;
  import pci_bridge_seq_list::*;
+ import pci_bridge_pkg::*;
 
  //////////////////////////////////////////////////////////////////////////////
  // including pci_bridge test list
