@@ -118,10 +118,19 @@ class pci_driver extends uvm_driver #(pci_transaction);
 	// Description : Drive data phase
 	//////////////////////////////////////////////////////////////////////////////
 	task drive_data_phase(pci_transaction tx);
+		int timeout_count = 0;
 		vif.dr_cb.IRDY <= 1'b0;   // Assert IRDY#
 		vif.dr_cb.CBE <= tx.byte_en; // All byte enables active
 
-		wait(!vif.dr_cb.DEVSEL && !vif.dr_cb.TRDY);  // Wait for target
+		// Wait for target ready with timeout
+		while (vif.rc_cb.DEVSEL | vif.rc_cb.TRDY) begin
+			@(vif.rc_cb);
+			timeout_count++;
+			if (timeout_count >= 16) begin
+				`uvm_error(get_type_name(), "Target response timeout - no response within 16 clock cycles");
+				break;
+			end
+		end
 		@(vif.dr_cb);
 		vif.dr_cb.IRDY <= 1'b1;   // Deassert IRDY#
 	endtask

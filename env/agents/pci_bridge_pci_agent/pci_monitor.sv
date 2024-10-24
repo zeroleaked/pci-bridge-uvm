@@ -52,7 +52,7 @@ class pci_monitor extends uvm_monitor;
 	///////////////////////////////////////////////////////////////////////////////
 	task collect_transaction();
 		bit [31:0] addr;
-
+		
 		collect_address_phase();
 		if (tx == null) return;
 		
@@ -82,16 +82,14 @@ class pci_monitor extends uvm_monitor;
 			@(vif.rc_cb);
 			timeout_count++;
 			if (timeout_count >= 16) begin
-				`uvm_error(get_type_name(), "Target response timeout - no response within 16 clock cycles");
+				tx.status = TRANS_TIMEOUT;
 				break;
-			end
+			end 
 		end
 		// Collect data if target responded in time
-		if (timeout_count < 16) begin
-			tx.data = vif.rc_cb.AD;
-			tx.byte_en = vif.rc_cb.CBE;
-			@(vif.rc_cb); // Wait for next clock
-		end
+		tx.data = vif.rc_cb.AD;
+		tx.byte_en = vif.rc_cb.CBE;
+		@(vif.rc_cb); // Wait for next clock
 	endtask
 endclass : pci_monitor
 

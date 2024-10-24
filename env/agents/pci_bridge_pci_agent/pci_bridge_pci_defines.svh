@@ -9,4 +9,10 @@ typedef enum bit [3:0] {
     MEM_WRITE = 4'b0111   // Memory Write
 } pci_cmd_t;
 
+typedef enum {
+	TRANS_OK,
+	TRANS_TIMEOUT,
+	TRANS_ERROR
+} trans_status_e;
+
 `endif // PCI_BRIDGE_PCI_DEFINES_SVH
