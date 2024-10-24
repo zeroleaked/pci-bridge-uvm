@@ -76,11 +76,22 @@ class pci_monitor extends uvm_monitor;
 	// Description : Monitor data phase
 	///////////////////////////////////////////////////////////////////////////////
 	task collect_data_phase();
-		// Wait for target ready
-		wait(!vif.rc_cb.DEVSEL && !vif.rc_cb.TRDY);
-		tx.data = vif.rc_cb.AD;
-		tx.byte_en = vif.rc_cb.CBE;
-		@(vif.rc_cb); // Wait for next clock
+		int timeout_count = 0;
+		// Wait for target ready with timeout
+		while (vif.rc_cb.DEVSEL | vif.rc_cb.TRDY) begin
+			@(vif.rc_cb);
+			timeout_count++;
+			if (timeout_count >= 16) begin
+				`uvm_error(get_type_name(), "Target response timeout - no response within 16 clock cycles");
+				break;
+			end
+		end
+		// Collect data if target responded in time
+		if (timeout_count < 16) begin
+			tx.data = vif.rc_cb.AD;
+			tx.byte_en = vif.rc_cb.CBE;
+			@(vif.rc_cb); // Wait for next clock
+		end
 	endtask
 endclass : pci_monitor
 
