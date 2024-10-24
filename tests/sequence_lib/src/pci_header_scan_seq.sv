@@ -16,8 +16,7 @@ class pci_header_scan_seq extends uvm_sequence#(pci_transaction);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : body 
-	// Description : Body of sequence to send randomized transaction through
-	// sequencer to driver
+	// Description : Scan all PCI predefined register
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
 		bit [7:0] addr;

@@ -1,16 +1,16 @@
-`ifndef PCI_CONFIG_WRITE_SEQ 
-`define PCI_CONFIG_WRITE_SEQ
-class pci_config_write_seq extends uvm_sequence#(pci_transaction);
-
+`ifndef PCI_SETUP_BUS_SEQ
+`define PCI_SETUP_BUS_SEQ
+class pci_setup_bus_seq extends uvm_sequence#(pci_transaction);
+	// Initialize the basic Config Registers of the PCI bridge
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_object_utils(pci_config_write_seq)
+	`uvm_object_utils(pci_setup_bus_seq)
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Description : sequence constructor
 	//////////////////////////////////////////////////////////////////////////////
-	function new(string name = "pci_config_write_seq");
+	function new(string name = "pci_setup_bus_seq");
 		super.new(name);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
