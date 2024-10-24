@@ -24,7 +24,7 @@ class pci_memory_read_seq extends uvm_sequence#(pci_transaction);
 		register_address < 8'hec; register_address += 3'b100) begin
 			do_memory_read(TAR0_BASE_ADDR_0 | register_address);
 		end
-    	`uvm_info(get_type_name(), "read memory completed", UVM_LOW)
+    	`uvm_info(get_type_name(), "read memory sequence completed", UVM_LOW)
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_config_write 
@@ -38,7 +38,7 @@ class pci_memory_read_seq extends uvm_sequence#(pci_transaction);
 			address		== req_address;
 			byte_en		== 4'h0;
 		})
-		else `uvm_error("PCI_MEMORY_WRITE_SEQ", "Randomization failed");
+		else `uvm_error(get_type_name(), "Randomization failed");
 		finish_item(req);
 		get_response(rsp);
 	endtask

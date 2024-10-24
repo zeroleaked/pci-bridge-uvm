@@ -1,16 +1,16 @@
-`ifndef PCI_CONFIG_READ_SEQ 
-`define PCI_CONFIG_READ_SEQ
-class pci_config_read_seq extends uvm_sequence#(pci_transaction);
+`ifndef PCI_MEMORY_WRITE_SEQ 
+`define PCI_MEMORY_WRITE_SEQ
+class pci_memory_write_seq extends uvm_sequence#(pci_transaction);
 
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_object_utils(pci_config_read_seq)
+	`uvm_object_utils(pci_memory_write_seq)
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Description : sequence constructor
 	//////////////////////////////////////////////////////////////////////////////
-	function new(string name = "pci_config_read_seq");
+	function new(string name = "pci_memory_write_seq");
 		super.new(name);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
@@ -19,22 +19,25 @@ class pci_config_read_seq extends uvm_sequence#(pci_transaction);
 	// sequencer to driver
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
+		bit [31:0] write_address;
 		req = pci_transaction::type_id::create("req");
-		for (bit [31:0] test_address = VENDOR_DEVICE_ID;
-			test_address <= INT_INFO; test_address += 3'b100) begin
-				start_item(req);
-				assert(req.randomize() with {
-					command == CFG_READ;
-					address == test_address;
-					byte_en	== 4'h0;
-				})
-				else `uvm_error(get_type_name(), "Randomization failed")
-				finish_item(req);
-				get_response(rsp);
+		for (bit [31:0] register_address = P_TA0;
+		register_address <= W_TA5; register_address += 3'b100) begin
+			write_address = TAR0_BASE_ADDR_0 | register_address;
+			start_item(req);
+			assert(req.randomize() with {
+				command == MEM_WRITE;
+				address == write_address;
+				data == 32'h0;
+				byte_en	== 4'h0;
+			})
+			else `uvm_error(get_type_name(), "Randomization failed")
+			finish_item(req);
+			get_response(rsp);
 		end
-    	`uvm_info(get_type_name(), "read config sequence completed", UVM_LOW)
+    	`uvm_info(get_type_name(), "write memory sequence completed", UVM_LOW)
 	endtask
-	 
+
 endclass
 
 `endif

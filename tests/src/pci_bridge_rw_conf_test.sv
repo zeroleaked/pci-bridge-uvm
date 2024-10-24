@@ -12,6 +12,7 @@ class pci_bridge_rw_conf_test extends uvm_test;
 	pci_config_read_seq		read_conf_seq;
 	pci_config_write_seq	write_conf_seq;
 	pci_memory_read_seq 	read_mem_seq;
+	pci_memory_write_seq 	write_mem_seq;
 	////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Decription: Constructor 
@@ -30,6 +31,7 @@ class pci_bridge_rw_conf_test extends uvm_test;
 		read_conf_seq = pci_config_read_seq::type_id::create("seq");
 		write_conf_seq = pci_config_write_seq::type_id::create("seq");
 		read_mem_seq = pci_memory_read_seq::type_id::create("seq");
+		write_mem_seq = pci_memory_write_seq::type_id::create("seq");
 	endfunction : build_phase
 	////////////////////////////////////////////////////////////////////
 	// Method name : run_phase 
@@ -41,6 +43,7 @@ class pci_bridge_rw_conf_test extends uvm_test;
 			write_conf_seq.start(env.pci_agent.sequencer);
 			read_conf_seq.start(env.pci_agent.sequencer);
 			read_mem_seq.start(env.pci_agent.sequencer);
+			write_mem_seq.start(env.pci_agent.sequencer);
 		phase.drop_objection(this);
 		phase.phase_done.set_drain_time(this, 1000ns);
 	endtask : run_phase

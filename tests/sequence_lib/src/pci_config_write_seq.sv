@@ -23,6 +23,7 @@ class pci_config_write_seq extends uvm_sequence#(pci_transaction);
 		do_config_write(COMMAND_STATUS, 32'h7);
 		// set target base address to 1000_0000
 		do_config_write(BAR0, TAR0_BASE_ADDR_0);
+    	`uvm_info(get_type_name(), "write config sequence completed", UVM_LOW)
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_config_write 
@@ -37,10 +38,9 @@ class pci_config_write_seq extends uvm_sequence#(pci_transaction);
 			data		== req_data;
 			byte_en		== 4'h0;
 		})
-		else `uvm_error("PCI_CONFIG_WRITE_SEQ", "Randomization failed");
+		else `uvm_error(get_type_name(), "Randomization failed");
 		finish_item(req);
 		get_response(rsp);
-    	`uvm_info(get_type_name(), "write sequence completed", UVM_LOW)
 	endtask
 
 endclass
