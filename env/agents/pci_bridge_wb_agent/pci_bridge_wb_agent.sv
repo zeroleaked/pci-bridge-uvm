@@ -7,7 +7,7 @@ class pci_bridge_wb_agent extends uvm_agent;
 	///////////////////////////////////////////////////////////////////////////////
 	wb_driver driver;
 	wb_sequencer sequencer;
-	pci_bridge_wb_monitor monitor;
+	wb_monitor monitor;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of component utils 
 	///////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ class pci_bridge_wb_agent extends uvm_agent;
 		super.build_phase(phase);
 		driver = wb_driver::type_id::create("driver", this);
 		sequencer = wb_sequencer::type_id::create("sequencer", this);
-		monitor = pci_bridge_wb_monitor::type_id::create("monitor", this);
+		monitor = wb_monitor::type_id::create("monitor", this);
 	endfunction : build_phase
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : connect_phase 

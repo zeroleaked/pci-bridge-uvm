@@ -5,7 +5,6 @@ class wb_transaction extends uvm_sequence_item;
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of transaction fields
 	//////////////////////////////////////////////////////////////////////////////
-	rand bit is_reset;
 	rand bit is_write;
 	rand bit [31:0] address;
 	rand bit [31:0] data;
@@ -14,7 +13,6 @@ class wb_transaction extends uvm_sequence_item;
 	//Declaration of Utility and Field macros,
 	//////////////////////////////////////////////////////////////////////////////
 	`uvm_object_utils_begin(wb_transaction)
-		`uvm_field_int(is_reset, UVM_ALL_ON)
 		`uvm_field_int(is_write, UVM_ALL_ON)
 		`uvm_field_int(address, UVM_ALL_ON)
 		`uvm_field_int(data, UVM_ALL_ON)

@@ -13,7 +13,7 @@ package pci_bridge_wb_agent_pkg;
   `include "wb_transaction.sv"
   `include "wb_driver.sv"
   `include "wb_sequencer.sv"
-  `include "pci_bridge_wb_monitor.sv"
+  `include "wb_monitor.sv"
   `include "pci_bridge_wb_agent.sv"
 
 endpackage
