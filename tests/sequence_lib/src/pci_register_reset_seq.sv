@@ -23,7 +23,7 @@ class pci_register_reset_seq extends uvm_sequence#(pci_transaction);
 		write_seq = pci_memory_write_seq::type_id::create("req");
 		for (addr = P_TA0; addr <= W_TA5; addr += 3'b100) begin
 			write_seq.set_address(addr);
-			write_seq.set_data(31'h0);
+			write_seq.set_data(32'h0);
 			write_seq.start(m_sequencer);
 		end
     	`uvm_info(get_type_name(), "register reset sequence completed", UVM_LOW)
