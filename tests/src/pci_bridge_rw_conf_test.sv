@@ -9,10 +9,8 @@ class pci_bridge_rw_conf_test extends uvm_test;
 	`uvm_component_utils(pci_bridge_rw_conf_test)
  
 	pci_bridge_environment	env;
-	pci_header_scan_seq		read_conf_seq;
-	pci_bus_setup_seq	write_conf_seq;
-	pci_register_scan_seq 	read_mem_seq;
-	pci_register_reset_seq 	write_mem_seq;
+	pci_init_seq		pci_init_seq_i;
+	pci_wb_image_config_seq		pci_wb_image_config_seq_i;
 	////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Decription: Constructor 
@@ -28,10 +26,8 @@ class pci_bridge_rw_conf_test extends uvm_test;
 		super.build_phase(phase);
  
 		env = pci_bridge_environment::type_id::create("env", this);
-		read_conf_seq = pci_header_scan_seq::type_id::create("seq");
-		write_conf_seq = pci_bus_setup_seq::type_id::create("seq");
-		read_mem_seq = pci_register_scan_seq::type_id::create("seq");
-		write_mem_seq = pci_register_reset_seq::type_id::create("seq");
+		pci_init_seq_i = pci_init_seq::type_id::create("seq");
+		pci_wb_image_config_seq_i = pci_wb_image_config_seq::type_id::create("seq");
 	endfunction : build_phase
 	////////////////////////////////////////////////////////////////////
 	// Method name : run_phase 
@@ -39,11 +35,8 @@ class pci_bridge_rw_conf_test extends uvm_test;
 	////////////////////////////////////////////////////////////////////
 	task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
-			read_conf_seq.start(env.pci_agent.sequencer);
-			write_conf_seq.start(env.pci_agent.sequencer);
-			read_conf_seq.start(env.pci_agent.sequencer);
-			read_mem_seq.start(env.pci_agent.sequencer);
-			write_mem_seq.start(env.pci_agent.sequencer);
+			pci_init_seq_i.start(env.pci_agent.sequencer);
+			pci_wb_image_config_seq_i.start(env.pci_agent.sequencer);
 		phase.drop_objection(this);
 		phase.phase_done.set_drain_time(this, 1000ns);
 	endtask : run_phase
