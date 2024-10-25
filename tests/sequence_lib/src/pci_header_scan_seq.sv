@@ -23,7 +23,7 @@ class pci_header_scan_seq extends uvm_sequence#(pci_transaction);
 		read_seq = pci_config_read_seq::type_id::create("req");
 		for (addr = VENDOR_DEVICE_ID; addr <= INT_INFO; addr += 3'b100) begin
 			read_seq.set_address(addr);
-			read_seq.start(m_sequencer, this);
+			read_seq.start(m_sequencer);
 		end
     	`uvm_info(get_type_name(), "header scan sequence completed", UVM_LOW)
 	endtask
