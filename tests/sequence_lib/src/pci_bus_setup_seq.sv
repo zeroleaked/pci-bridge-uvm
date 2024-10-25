@@ -15,8 +15,7 @@ class pci_bus_setup_seq extends uvm_sequence#(pci_transaction);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : body 
-	// Description : Body of sequence to send randomized transaction through
-	// sequencer to driver
+	// Description : Enable bus access and set device address
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
 		pci_config_write_seq write_seq;

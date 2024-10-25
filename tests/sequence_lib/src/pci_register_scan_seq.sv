@@ -15,7 +15,7 @@ class pci_register_scan_seq extends uvm_sequence#(pci_transaction);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : body 
-	// Description : Scan all PCI predefined register
+	// Description : Scan all device dependent register
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
 		pci_memory_read_seq read_seq;

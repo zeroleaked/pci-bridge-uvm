@@ -15,7 +15,7 @@ class pci_register_reset_seq extends uvm_sequence#(pci_transaction);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : body 
-	// Description : Reset all device's register
+	// Description : Reset all device register
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
 		pci_memory_write_seq write_seq;
