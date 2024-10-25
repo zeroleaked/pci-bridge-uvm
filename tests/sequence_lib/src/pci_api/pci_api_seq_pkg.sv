@@ -1,5 +1,5 @@
-`ifndef PCI_BRIDGE_API_SEQ_PKG
-`define PCI_BRIDGE_API_SEQ_PKG
+`ifndef PCI_API_SEQ_PKG
+`define PCI_API_SEQ_PKG
 
 package pci_api_seq_pkg;
  
