@@ -12,7 +12,7 @@ class pci_bridge_rw_conf_test extends uvm_test;
 	pci_header_scan_seq		read_conf_seq;
 	pci_bus_setup_seq	write_conf_seq;
 	pci_register_scan_seq 	read_mem_seq;
-	pci_memory_write_seq 	write_mem_seq;
+	pci_register_reset_seq 	write_mem_seq;
 	////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Decription: Constructor 
@@ -31,7 +31,7 @@ class pci_bridge_rw_conf_test extends uvm_test;
 		read_conf_seq = pci_header_scan_seq::type_id::create("seq");
 		write_conf_seq = pci_bus_setup_seq::type_id::create("seq");
 		read_mem_seq = pci_register_scan_seq::type_id::create("seq");
-		write_mem_seq = pci_memory_write_seq::type_id::create("seq");
+		write_mem_seq = pci_register_reset_seq::type_id::create("seq");
 	endfunction : build_phase
 	////////////////////////////////////////////////////////////////////
 	// Method name : run_phase 

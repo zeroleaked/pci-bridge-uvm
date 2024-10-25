@@ -12,6 +12,7 @@ package pci_api_seq_pkg;
 	`include "pci_config_read_seq.sv"
 	`include "pci_config_write_seq.sv"
 	`include "pci_memory_read_seq.sv"
+	`include "pci_memory_write_seq.sv"
 
 endpackage
 
