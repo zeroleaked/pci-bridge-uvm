@@ -1,7 +1,6 @@
-`ifndef PCI_CONFIG_READ_SEQ 
+`ifndef PCI_CONFIG_READ_SEQ
 `define PCI_CONFIG_READ_SEQ
-class pci_config_read_seq extends uvm_sequence#(pci_transaction);
-
+class pci_config_read_seq extends pci_api_base_seq;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
@@ -14,26 +13,18 @@ class pci_config_read_seq extends uvm_sequence#(pci_transaction);
 		super.new(name);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
-	// Method name : body 
-	// Description : Body of sequence to send randomized transaction through
-	// sequencer to driver
+	// Method name : do_randomize 
+	// Description : Setup randomize constraints for config read
 	//////////////////////////////////////////////////////////////////////////////
-	virtual task body();
-		req = pci_transaction::type_id::create("req");
-		for (bit [31:0] test_address = VENDOR_DEVICE_ID;
-			test_address <= INT_INFO; test_address += 3'b100) begin
-				start_item(req);
-				assert(req.randomize() with {
-					command == CFG_READ;
-					address == test_address;
-					byte_en	== 4'h0;
-				})
-				else `uvm_error(get_type_name(), "Randomization failed")
-				finish_item(req);
-				get_response(rsp);
-		end
-    	`uvm_info(get_type_name(), "read config sequence completed", UVM_LOW)
-	endtask
+	virtual function bit do_randomize();
+		// bit ok;
+		return req.randomize() with {
+			req.command == CFG_READ;
+			req.address == req_address;
+			req.byte_en	== 4'hF;
+		};
+		// return ok;
+	endfunction
 	 
 endclass
 
