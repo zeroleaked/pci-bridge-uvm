@@ -25,6 +25,7 @@ class pci_header_scan_seq extends uvm_sequence#(pci_transaction);
 			read_seq.set_address(addr);
 			read_seq.start(m_sequencer, this);
 		end
+    	`uvm_info(get_type_name(), "header scan sequence completed", UVM_LOW)
 	endtask
 	 
 endclass

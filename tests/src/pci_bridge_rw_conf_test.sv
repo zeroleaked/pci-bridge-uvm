@@ -10,7 +10,7 @@ class pci_bridge_rw_conf_test extends uvm_test;
  
 	pci_bridge_environment	env;
 	pci_header_scan_seq		read_conf_seq;
-	pci_setup_bus_seq	write_conf_seq;
+	pci_bus_setup_seq	write_conf_seq;
 	pci_memory_read_seq 	read_mem_seq;
 	pci_memory_write_seq 	write_mem_seq;
 	////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ class pci_bridge_rw_conf_test extends uvm_test;
  
 		env = pci_bridge_environment::type_id::create("env", this);
 		read_conf_seq = pci_header_scan_seq::type_id::create("seq");
-		write_conf_seq = pci_setup_bus_seq::type_id::create("seq");
+		write_conf_seq = pci_bus_setup_seq::type_id::create("seq");
 		read_mem_seq = pci_memory_read_seq::type_id::create("seq");
 		write_mem_seq = pci_memory_write_seq::type_id::create("seq");
 	endfunction : build_phase
