@@ -17,7 +17,7 @@ package pci_bridge_seq_list;
 
 	`include "pci_header_scan_seq.sv"
 	`include "pci_bus_setup_seq.sv"
-	`include "pci_memory_read_seq.sv"
+	`include "pci_register_scan_seq.sv"
 	`include "pci_memory_write_seq.sv"
 
 endpackage
