@@ -12,10 +12,10 @@ class pci_bridge_ref_model extends uvm_component;
 	pci_transaction pci_rm_trans;
 	uvm_tlm_analysis_fifo#(pci_transaction) pci_rm_exp_fifo;
 
-	uvm_analysis_export#(pci_bridge_wb_transaction) wb_rm_export;
-	uvm_analysis_port#(pci_bridge_wb_transaction) wb_rm2sb_port;
-	pci_bridge_wb_transaction wb_exp_trans,wb_rm_trans;
-	uvm_tlm_analysis_fifo#(pci_bridge_wb_transaction) wb_rm_exp_fifo;
+	uvm_analysis_export#(wb_transaction) wb_rm_export;
+	uvm_analysis_port#(wb_transaction) wb_rm2sb_port;
+	wb_transaction wb_exp_trans,wb_rm_trans;
+	uvm_tlm_analysis_fifo#(wb_transaction) wb_rm_exp_fifo;
 
 	protected pci_register_handler register_handler;
 

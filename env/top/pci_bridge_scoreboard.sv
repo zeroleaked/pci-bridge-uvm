@@ -12,12 +12,12 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	// Analysis imports
 	uvm_analysis_imp_pci_exp #(pci_transaction, pci_bridge_scoreboard) pci_exp_imp;
 	uvm_analysis_imp_pci_act #(pci_transaction, pci_bridge_scoreboard) pci_act_imp;
-	uvm_analysis_imp_wb_exp #(pci_bridge_wb_transaction, pci_bridge_scoreboard) wb_exp_imp;
-	uvm_analysis_imp_wb_act #(pci_bridge_wb_transaction, pci_bridge_scoreboard) wb_act_imp;
+	uvm_analysis_imp_wb_exp #(wb_transaction, pci_bridge_scoreboard) wb_exp_imp;
+	uvm_analysis_imp_wb_act #(wb_transaction, pci_bridge_scoreboard) wb_act_imp;
 
 	// Transaction queues
 	pci_transaction pci_exp_queue[$], pci_act_queue[$];
-	pci_bridge_wb_transaction wb_exp_queue[$], wb_act_queue[$];
+	wb_transaction wb_exp_queue[$], wb_act_queue[$];
 
 	// Error flag
 	bit error;
@@ -43,11 +43,11 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 		pci_act_queue.push_back(trans);
 	endfunction: write_pci_act
 
-	function void write_wb_exp(pci_bridge_wb_transaction trans);
+	function void write_wb_exp(wb_transaction trans);
 		wb_exp_queue.push_back(trans);
 	endfunction: write_wb_exp
 
-	function void write_wb_act(pci_bridge_wb_transaction trans);
+	function void write_wb_act(wb_transaction trans);
 		wb_act_queue.push_back(trans);
 	endfunction: write_wb_act
 
@@ -85,7 +85,7 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	endtask
 
 	task compare_wb_trans();
-		pci_bridge_wb_transaction exp_trans, act_trans;
+		wb_transaction exp_trans, act_trans;
 		
 		exp_trans = wb_exp_queue.pop_front();
 		act_trans = wb_act_queue.pop_front();
