@@ -4,6 +4,7 @@
 package pci_bridge_pkg;
 
 	parameter bit [31:0] TAR0_BASE_ADDR_0 = 32'h1000_0000;
+	parameter bit [31:0] W_BASE_ADDR_1 = 32'hC000_0000;
 
 	// Register address definitions
 	typedef enum bit [11:0] {
