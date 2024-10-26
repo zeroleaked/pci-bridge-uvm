@@ -54,7 +54,7 @@ class pci_bridge_environment extends uvm_env;
 
 		// connect ref to wb
 		// // ref_model.wb_rm2sb_port.connect(coverage.wb_analysis_export);
-		// // wb_agent.driver.drv2rm_port.connect(ref_model.wb_rm_export);
+		wb_agent.driver.drv2rm_port.connect(ref_model.wb_imp);
 		ref_model.wb_rm2sb_port.connect(sb.wb_exp_imp);
 	endfunction : connect_phase
 endclass : pci_bridge_environment

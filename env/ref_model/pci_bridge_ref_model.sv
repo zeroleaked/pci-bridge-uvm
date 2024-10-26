@@ -63,20 +63,41 @@ class pci_bridge_ref_model extends uvm_component;
 				pci_trans = pci_queue.pop_front();
 				pci_expected_transaction();
 				pci_rm2sb_port.write(pci_trans);
+				// `uvm_info(get_type_name(), "rm tx", UVM_LOW)
+				// pci_trans.print();
 			end
 			if (wb_queue.size() > 0) begin
+				wb_trans = wb_queue.pop_front();
+				wb_expected_transaction();
+				wb_rm2sb_port.write(wb_trans);
+				`uvm_info(get_type_name(), "rm tx", UVM_LOW)
+				wb_trans.print();
 			end
 		end
 	endtask
 	//////////////////////////////////////////////////////////////////////////////
-	// Method name : get_expected_transaction 
-	// Description : Expected transaction 
+	// Method name : pci_expected_transaction 
+	// Description : Task for processing PCI transaction
 	//////////////////////////////////////////////////////////////////////////////
 	task pci_expected_transaction();
-		if (pci_trans.is_write())	
-			register_handler.write_config(pci_trans.address[11:0], pci_trans.data);
-		else
-			pci_trans.data = register_handler.read_config(pci_trans.address[11:0]);
+		// check base address
+		bit [31:0] base_addr = register_handler.read_config(BAR0);
+		bit is_in_range = (pci_trans.address >= base_addr) &&
+			(pci_trans.address < (base_addr + 12'h200));
+		if (pci_trans.is_config() | is_in_range) begin
+			if (pci_trans.is_write())	
+				register_handler.write_config(pci_trans.address[11:0], pci_trans.data);
+			else
+				pci_trans.data = register_handler.read_config(pci_trans.address[11:0]);
+		end
+	endtask
+	//////////////////////////////////////////////////////////////////////////////
+	// Method name : wb_expected_transaction 
+	// Description : Task for processing WB transaction
+	//////////////////////////////////////////////////////////////////////////////
+	task wb_expected_transaction();
+		// check if in range of image
+		// if so, propagate to pci bus
 	endtask
 endclass
 
