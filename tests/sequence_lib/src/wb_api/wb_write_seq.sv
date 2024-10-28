@@ -26,7 +26,7 @@ class wb_write_seq extends wb_api_base_seq;
 	virtual function bit do_randomize();
 		return req.randomize() with {
 			req.is_write == 1'b1;
-			req.address == req_address;
+			req.address[31:2] == req_address[31:2];
 			req.data == req_data;
 			req.select == 4'hF;
 		};
