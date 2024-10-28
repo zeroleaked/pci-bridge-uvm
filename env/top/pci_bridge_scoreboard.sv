@@ -80,7 +80,7 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 			`uvm_error(get_type_name(), $sformatf("PCI transaction mismatch:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()))
 			error = 1;
 		end else begin
-			`uvm_info(get_type_name(), "PCI transaction match", UVM_LOW)
+			`uvm_info(get_type_name(), $sformatf("PCI transaction match %s 0x%h", act_trans.command.name(), act_trans.address), UVM_LOW)
 		end
 	endtask
 
@@ -90,18 +90,23 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 		exp_trans = wb_exp_queue.pop_front();
 		act_trans = wb_act_queue.pop_front();
 
-		`uvm_info(get_type_name(), $sformatf("Comparing WB transactions:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()), UVM_LOW)
+		// `uvm_info(get_type_name(), $sformatf("Comparing WB transactions:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()), UVM_LOW)
 
 		if (!exp_trans.compare(act_trans)) begin
 			`uvm_error(get_type_name(), $sformatf("WB transaction mismatch:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()))
 			error = 1;
 		end else begin
-			`uvm_info(get_type_name(), "WB transaction match", UVM_LOW)
+			`uvm_info(get_type_name(), $sformatf("WB transaction match %d 0x%h", act_trans.is_write, act_trans.address), UVM_LOW)
 		end
 	endtask	
 
 	function void report_phase(uvm_phase phase);
-		$display($sformatf("PCI queue: %d/%d WB queue: %d/%d", pci_act_queue.size(), pci_exp_queue.size(), wb_act_queue.size(), wb_exp_queue.size()));
+		$display($sformatf("PCI queue: %d/%d\nWB queue: %d/%d", pci_act_queue.size(), pci_exp_queue.size(), wb_act_queue.size(), wb_exp_queue.size()));
+		if ((pci_act_queue.size() != 0) ||(pci_exp_queue.size() != 0)
+		|| (wb_act_queue.size() != 0) || (wb_exp_queue.size() != 0)) begin
+			`uvm_error(get_type_name(), $sformatf("Scoreboard queue not depleted"))
+			error = 1;
+		end
 		if(error==0) begin
 			$display("-------------------------------------------------");
 			$display("------ INFO : TEST CASE PASSED ------------------");

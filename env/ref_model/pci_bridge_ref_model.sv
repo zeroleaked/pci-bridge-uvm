@@ -70,8 +70,8 @@ class pci_bridge_ref_model extends uvm_component;
 				wb_trans = wb_queue.pop_front();
 				wb_expected_transaction();
 				wb_rm2sb_port.write(wb_trans);
-				`uvm_info(get_type_name(), "rm tx", UVM_LOW)
-				wb_trans.print();
+				// `uvm_info(get_type_name(), "rm tx", UVM_LOW)
+				// wb_trans.print();
 			end
 		end
 	endtask
@@ -96,8 +96,20 @@ class pci_bridge_ref_model extends uvm_component;
 	// Description : Task for processing WB transaction
 	//////////////////////////////////////////////////////////////////////////////
 	task wb_expected_transaction();
+		bit is_in_range;
+		bit [31:0] mask, img_addr;
 		// check if in range of image
-		// if so, propagate to pci bus
+		mask = register_handler.read_config(W_AM1);
+		img_addr = register_handler.read_config(W_BA1);
+		is_in_range = (wb_trans.address & mask) == (img_addr & mask);
+		// if in range, propagate to pci bus
+		if (is_in_range) begin
+			pci_trans.address = wb_trans.address & mask;
+			pci_trans.data = wb_trans.data;
+			pci_trans.byte_en = ~wb_trans.select; // pci is active low, wb is active high
+			pci_trans.command = MEM_WRITE;
+			pci_rm2sb_port.write(pci_trans);
+		end
 	endtask
 endclass
 

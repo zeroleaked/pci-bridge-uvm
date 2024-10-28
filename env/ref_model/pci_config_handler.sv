@@ -31,7 +31,15 @@ class pci_register_handler extends uvm_object;
 			if (addr == 12'h004) std_config_space[addr[7:2]] ^= data; 
 			else std_config_space[addr[7:2]] = data;
 		end else begin
-			ext_config_space[(addr - 12'h100) >> 2] = data;
+			case (addr)
+				// disable 12 LSB for W_AM
+				W_AM1, W_AM2, W_AM3, W_AM4, W_AM5: begin
+					ext_config_space[(addr - 12'h100) >> 2] = data & 32'hFFFF_F000;
+				end
+				default: begin
+					ext_config_space[(addr - 12'h100) >> 2] = data;
+				end
+			endcase
 		end
 	endfunction
 endclass

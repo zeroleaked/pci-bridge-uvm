@@ -10,6 +10,7 @@ package pci_bridge_seq_list;
 	import pci_bridge_pci_agent_pkg::*;
 	import pci_bridge_wb_agent_pkg::*;
 	import pci_api_seq_pkg::*;
+	import wb_api_seq_pkg::*;
 
 	//////////////////////////////////////////////////////////////////////////////
 	// including pci_bridge test list
@@ -20,6 +21,7 @@ package pci_bridge_seq_list;
 	`include "pci_register_scan_seq.sv"
 	`include "pci_register_reset_seq.sv"
 	`include "pci_wb_image_config_seq.sv"
+	`include "wb_pci_rw_seq.sv"
 	
 	`include "pci_init_seq.sv"
 

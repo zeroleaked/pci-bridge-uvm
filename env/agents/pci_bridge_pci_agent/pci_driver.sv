@@ -85,7 +85,6 @@ class pci_driver extends uvm_driver #(pci_transaction);
 				join_any
 				disable wait_frame;
 				if (!vif.dr_cb.FRAME) begin
-					`uvm_info(get_type_name(), $sformatf("Device asserts frame with addr %h", vif.dr_cb.AD), UVM_LOW);
 					fork: wait_irdy
 						wait (!vif.dr_cb.IRDY);
 						repeat(16) @(vif.dr_cb);

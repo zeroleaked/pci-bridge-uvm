@@ -58,8 +58,8 @@ class pci_monitor extends uvm_monitor;
 		
 		collect_data_phase();
 
-		`uvm_info(get_type_name(), "monitor tx", UVM_LOW)
-		tx.print();
+		// `uvm_info(get_type_name(), "monitor tx", UVM_LOW)
+		// tx.print();
 		mon2sb_port.write(tx);
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
