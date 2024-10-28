@@ -58,6 +58,8 @@ class pci_monitor extends uvm_monitor;
 		
 		collect_data_phase();
 
+		`uvm_info(get_type_name(), "monitor tx", UVM_LOW)
+		tx.print();
 		mon2sb_port.write(tx);
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
@@ -82,7 +84,6 @@ class pci_monitor extends uvm_monitor;
 			@(vif.rc_cb);
 			timeout_count++;
 			if (timeout_count >= 16) begin
-				tx.status = TRANS_TIMEOUT;
 				break;
 			end 
 		end
