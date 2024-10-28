@@ -38,29 +38,96 @@ class pci_driver extends uvm_driver #(pci_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task run_phase(uvm_phase phase);
 		pci_transaction req;
+		bit is_tb_master = 1'b1;
 		reset();
 		forever begin
-			seq_item_port.get_next_item(req);
-			// `uvm_info(get_type_name(), "driver rx", UVM_LOW)
-			// req.print();
-			
-			if (req.is_config()) vif.dr_cb.IDSEL <= 1'b1;
-			drive_address_phase(req);
+			// Handle bus arbitration (REQ#/GNT#)
+			if (!vif.dr_cb.REQ) begin
+				repeat(5) @(vif.dr_cb);
+				// Grant
+				is_tb_master = 1'b0;
+				vif.dr_cb.GNT <= 0;
+			end else if (vif.dr_cb.REQ) begin
+				// Remove grant when request is deasserted
+				vif.dr_cb.GNT <= 1;
+				is_tb_master = 1'b1;
+			end
 
-			if (req.is_write()) vif.dr_cb.AD <= req.data;  // Drive data
-			else vif.dr_cb.AD <= 32'bz;    // Release AD bus
-			drive_data_phase(req);
-			
-			cleanup_transaction();
-			
-			// driver to reference model
-			$cast(rsp,req.clone());
-			rsp.set_id_info(req);
-			drv2rm_port.write(rsp);
-			seq_item_port.item_done();
-			seq_item_port.put(rsp);
+			if (is_tb_master) begin
+				// Process initiator transaction
+				seq_item_port.try_next_item(req);
+				if (req != null) begin
+					// `uvm_info(get_type_name(), "driver rx", UVM_LOW)
+					// req.print();
+					
+					if (req.is_config()) vif.dr_cb.IDSEL <= 1'b1;
+					drive_address_phase(req);
+
+					if (req.is_write()) vif.dr_cb.AD <= req.data;  // Drive data
+					else vif.dr_cb.AD <= 32'bz;    // Release AD bus
+					drive_data_phase(req);
+					
+					cleanup_transaction();
+					
+					// driver to reference model
+					$cast(rsp,req.clone());
+					rsp.set_id_info(req);
+					drv2rm_port.write(rsp);
+					seq_item_port.item_done();
+					seq_item_port.put(rsp);
+				end
+			end
+			else begin // DUT is master
+				// Wait for frame from master
+				fork: wait_frame
+					wait (!vif.dr_cb.FRAME);
+					repeat(5) @(vif.dr_cb);
+				join_any
+				disable wait_frame;
+				if (!vif.dr_cb.FRAME) begin
+					`uvm_info(get_type_name(), $sformatf("Device asserts frame with addr %h", vif.dr_cb.AD), UVM_LOW);
+					fork: wait_irdy
+						wait (!vif.dr_cb.IRDY);
+						repeat(16) @(vif.dr_cb);
+					join_any
+					disable wait_irdy;
+					if (!vif.dr_cb.IRDY) begin
+						vif.dr_cb.DEVSEL <= 0;
+						vif.dr_cb.TRDY <= 0;
+						@(vif.dr_cb);
+						vif.dr_cb.DEVSEL <= 1;
+						vif.dr_cb.TRDY <= 1;
+						@(vif.dr_cb);
+					end
+				end
+				cleanup_transaction();
+			end
+			@(vif.dr_cb);
 		end
 	endtask : run_phase
+	//////////////////////////////////////////////////////////////////////////////
+	// Method name : wait_with_timeout 
+	// Description : Task to monitor for timeout condition with configurable message
+	//////////////////////////////////////////////////////////////////////////////
+	task wait_with_timeout(
+    	const ref logic signal_to_monitor,
+		input string timeout_msg,
+		output bit is_timeout,
+		input int timeout_cycles = 16
+	);
+		int timeout_count = 0;
+		is_timeout = 0;
+
+		while (signal_to_monitor) begin
+			@(vif.dr_cb);
+			timeout_count++;
+			if (timeout_count >= timeout_cycles) begin
+				`uvm_error(get_type_name(), $sformatf("waited for %s - no transaction within %0d clock cycles", timeout_msg, timeout_cycles));
+				is_timeout = 1;
+				break;
+			end
+		end
+	endtask
 	//////////////////////////////////////////////////////////////////////////////
 	// Method name : reset 
 	// Description : reset DUT
@@ -77,21 +144,20 @@ class pci_driver extends uvm_driver #(pci_transaction);
 	// Description : Reset signals to default states
 	//////////////////////////////////////////////////////////////////////////////
 	task cleanup_transaction();
-		// Signals driven by the initiator
+		// Signals driven by the bus
 		vif.dr_cb.RST		<= 1'b1;    // Active low, so set to inactive
 		vif.dr_cb.GNT		<= 1'b1;    // Active low, so set to inactive
 		vif.dr_cb.IDSEL		<= 1'b0;    // Typically low when inactive
-		vif.dr_cb.CBE		<= 4'b1111; // All byte enables inactive
-		vif.dr_cb.IRDY		<= 1'bz;
 
 		// Bidirectional signals set to high-impedance when not driven
 		vif.dr_cb.AD		<= 32'bz;
+		vif.dr_cb.CBE		<= 4'bz;
+		vif.dr_cb.FRAME 	<= 1'bz;
 		vif.dr_cb.PAR		<= 1'bz;
 		vif.dr_cb.PERR   	<= 1'bz;    
-
-		// Driven by target
-		vif.dr_cb.DEVSEL	<= 1'bz;
+		vif.dr_cb.IRDY		<= 1'bz;
 		vif.dr_cb.TRDY		<= 1'bz;
+		vif.dr_cb.DEVSEL	<= 1'bz;
 		vif.dr_cb.STOP		<= 1'bz;
 		vif.dr_cb.INTA		<= 1'bz;
 	endtask
@@ -111,19 +177,16 @@ class pci_driver extends uvm_driver #(pci_transaction);
 	// Description : Drive data phase
 	//////////////////////////////////////////////////////////////////////////////
 	task drive_data_phase(pci_transaction tx);
-		int timeout_count = 0;
 		vif.dr_cb.IRDY <= 1'b0;   // Assert IRDY#
 		vif.dr_cb.CBE <= tx.byte_en; // All byte enables active
 
-		// Wait for target ready with timeout
-		while (vif.rc_cb.DEVSEL | vif.rc_cb.TRDY) begin
-			@(vif.rc_cb);
-			timeout_count++;
-			if (timeout_count >= 16) begin
-				`uvm_error(get_type_name(), "Target response timeout - no response within 16 clock cycles");
-				break;
-			end
-		end
+		// wait_with_timeout(vif.dr_cb.TRDY, "TRDY", is_timeout);
+				// Wait for target ready with timeout
+		fork: wait_timeout
+			wait (!vif.dr_cb.DEVSEL & !vif.dr_cb.TRDY);
+			repeat(16) @(vif.dr_cb);
+		join_any
+		disable wait_timeout;
 		@(vif.dr_cb);
 		vif.dr_cb.IRDY <= 1'b1;   // Deassert IRDY#
 	endtask

@@ -46,8 +46,8 @@ class wb_monitor extends uvm_monitor;
 			wait(vif.rc_cb.CYC_I); // Wait for start of transaction
 			collect_transaction();
 			mon2sb_port.write(trans);
-			`uvm_info(get_type_name(), "monitor tx", UVM_LOW)
-			trans.print();
+			// `uvm_info(get_type_name(), "monitor tx", UVM_LOW)
+			// trans.print();
 
 		end
 	endtask : run_phase

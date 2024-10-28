@@ -101,6 +101,7 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	endtask	
 
 	function void report_phase(uvm_phase phase);
+		$display($sformatf("PCI queue: %d/%d WB queue: %d/%d", pci_act_queue.size(), pci_exp_queue.size(), wb_act_queue.size(), wb_exp_queue.size()));
 		if(error==0) begin
 			$display("-------------------------------------------------");
 			$display("------ INFO : TEST CASE PASSED ------------------");
