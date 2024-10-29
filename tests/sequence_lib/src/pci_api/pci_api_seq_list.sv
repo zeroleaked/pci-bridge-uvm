@@ -1,7 +1,7 @@
-`ifndef PCI_API_SEQ_PKG
-`define PCI_API_SEQ_PKG
+`ifndef PCI_API_SEQ_LIST
+`define PCI_API_SEQ_LIST
 
-package pci_api_seq_pkg;
+package pci_api_seq_list;
  
 	import uvm_pkg::*;
 	`include "uvm_macros.svh"

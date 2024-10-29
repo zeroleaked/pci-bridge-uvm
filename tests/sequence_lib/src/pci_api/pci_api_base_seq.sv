@@ -3,6 +3,7 @@
 class pci_api_base_seq extends uvm_sequence#(pci_transaction);
 	bit [31:0] req_address;
 	bit [31:0] req_data;
+	uvm_sequencer_base sequencer;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
@@ -43,15 +44,32 @@ class pci_api_base_seq extends uvm_sequence#(pci_transaction);
 	// Method name : set_address 
 	// Description : set address to one of the register
 	//////////////////////////////////////////////////////////////////////////////
-	task set_address(input bit [31:0] address);
+	virtual task set_address(input bit [31:0] address);
 		this.req_address = address;
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
-	// Method name : set_data
-	// Description : set data to be write to register
+	// Method name : configure
+	// Description : one-time setup
 	//////////////////////////////////////////////////////////////////////////////
-	task set_data(input bit [31:0] data);
-		this.req_data = data;
+	task configure(input uvm_sequencer_base sequencer);
+		this.sequencer = sequencer;
+	endtask
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : write_transaction
+	// Description : do a write pci transaction
+	//////////////////////////////////////////////////////////////////////////////
+	task write_transaction(input bit [31:0] address, data);
+		set_address(address);
+		req_data = data;
+		start(sequencer);
+	endtask
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : read_transaction
+	// Description : do a read pci transaction
+	//////////////////////////////////////////////////////////////////////////////
+	task read_transaction(input bit [31:0] address);
+		set_address(address);
+		start(sequencer);
 	endtask
 	 
 endclass

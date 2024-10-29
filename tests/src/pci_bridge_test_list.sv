@@ -7,10 +7,10 @@ package pci_bridge_test_list;
  `include "uvm_macros.svh"
 
  import pci_bridge_env_pkg::*;
- import pci_bridge_seq_list::*;
  import pci_bridge_pkg::*;
  import wb_api_seq_pkg::*;
  import bridge_seq_list::*;
+ import pci_worker_seq_list::*;
 
  //////////////////////////////////////////////////////////////////////////////
  // including pci_bridge test list

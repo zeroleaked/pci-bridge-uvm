@@ -9,7 +9,7 @@ package bridge_seq_list;
 	import pci_bridge_pkg::*;
 	import pci_bridge_pci_agent_pkg::*;
 	import pci_bridge_wb_agent_pkg::*;
-	import pci_api_seq_pkg::*;
+	import pci_api_seq_list::*;
 	import wb_api_seq_pkg::*;
 
 	//////////////////////////////////////////////////////////////////////////////

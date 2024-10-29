@@ -23,7 +23,7 @@ class pci_memory_write_seq extends pci_api_base_seq;
 	// Method name : do_randomize 
 	// Description : Setup randomize constraints for config read
 	//////////////////////////////////////////////////////////////////////////////
-	virtual function bit do_randomize();
+	function bit do_randomize();
 		return req.randomize() with {
 			req.command == MEM_WRITE;
 			req.address == req_address;

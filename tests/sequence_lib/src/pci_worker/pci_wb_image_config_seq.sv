@@ -21,22 +21,12 @@ class pci_wb_image_config_seq extends uvm_sequence#(pci_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
 		write_seq = pci_memory_write_seq::type_id::create("req");
-		reg_write(W_ERR_CS, 32'h0);
-		reg_write(W_IMG_CTRL1, 32'h0);
-		reg_write(W_BA1, W_BASE_ADDR_1);
-		reg_write(W_AM1, 32'hFFFF_FFFF);
+		write_seq.configure(m_sequencer);
+		write_seq.write_transaction(W_ERR_CS, 32'h0);
+		write_seq.write_transaction(W_IMG_CTRL1, 32'h0);
+		write_seq.write_transaction(W_BA1, W_BASE_ADDR_1);
+		write_seq.write_transaction(W_AM1, 32'hFFFF_FFFF);
     	`uvm_info(get_type_name(), "wb image config sequence completed", UVM_LOW)
-	endtask
-	///////////////////////////////////////////////////////////////////////////////
-	// Method name : body 
-	// Description : reset W_ERR_CS W_IMG_CTRL1, write 0xc000_0000 to W_BA1,
-	// set W_AM1
-	//////////////////////////////////////////////////////////////////////////////
-	task reg_write();
-		input bit [31:0] address, data;
-		write_seq.set_address(address);
-		write_seq.set_data(data);
-		write_seq.start(m_sequencer);
 	endtask
 
 endclass

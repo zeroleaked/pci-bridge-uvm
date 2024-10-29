@@ -16,7 +16,7 @@ class pci_config_read_seq extends pci_api_base_seq;
 	// Method name : do_randomize 
 	// Description : Setup randomize constraints for config read
 	//////////////////////////////////////////////////////////////////////////////
-	virtual function bit do_randomize();
+	function bit do_randomize();
 		// bit ok;
 		return req.randomize() with {
 			req.command == CFG_READ;
