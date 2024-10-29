@@ -1,15 +1,14 @@
-`ifndef PCI_BRIDGE_SEQ_LIST 
-`define PCI_BRIDGE_SEQ_LIST
+`ifndef PCI_WORKER_SEQ_LIST 
+`define PCI_WORKER_SEQ_LIST
 
-package pci_bridge_seq_list;
+package pci_worker_seq_list;
 
 	import uvm_pkg::*;
 	`include "uvm_macros.svh"
 
 	import pci_bridge_pkg::*;
-	import pci_bridge_pci_agent_pkg::*;
-	import pci_bridge_wb_agent_pkg::*;
-	import pci_api_seq_pkg::*;
+	import pci_bridge_pci_agent_pkg::pci_transaction;
+	import pci_api_seq_list::*;
 
 	//////////////////////////////////////////////////////////////////////////////
 	// including pci_bridge test list

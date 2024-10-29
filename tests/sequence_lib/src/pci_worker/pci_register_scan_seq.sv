@@ -21,9 +21,9 @@ class pci_register_scan_seq extends uvm_sequence#(pci_transaction);
 		pci_memory_read_seq read_seq;
 		bit [31:0] addr;
 		read_seq = pci_memory_read_seq::type_id::create("req");
+		read_seq.configure(m_sequencer);
 		for (addr = VENDOR_DEVICE_ID; addr <= INT_ACK; addr += 3'b100) begin
-			read_seq.set_address(addr);
-			read_seq.start(m_sequencer);
+			read_seq.read_transaction(addr);
 		end
     	`uvm_info(get_type_name(), "register scan sequence completed", UVM_LOW)
 	endtask

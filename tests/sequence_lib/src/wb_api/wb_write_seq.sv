@@ -1,29 +1,35 @@
-`ifndef PCI_CONFIG_READ_SEQ
-`define PCI_CONFIG_READ_SEQ
-class pci_config_read_seq extends pci_api_base_seq;
+`ifndef WB_WRITE_SEQ
+`define WB_WRITE_SEQ
+class wb_write_seq extends wb_api_base_seq;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_object_utils(pci_config_read_seq)
+	`uvm_object_utils(wb_write_seq)
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Description : sequence constructor
 	//////////////////////////////////////////////////////////////////////////////
-	function new(string name = "pci_config_read_seq");
+	function new(string name = "wb_write_seq");
 		super.new(name);
 	endfunction
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : set_address 
+	// Description : override base set_address 
+	//////////////////////////////////////////////////////////////////////////////
+	task set_address(input bit [31:0] address);
+		this.req_address = address | W_BASE_ADDR_1;
+	endtask
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_randomize 
 	// Description : Setup randomize constraints for config read
 	//////////////////////////////////////////////////////////////////////////////
 	virtual function bit do_randomize();
-		// bit ok;
 		return req.randomize() with {
-			req.command == CFG_READ;
-			req.address == req_address;
-			req.byte_en	== 4'hF;
+			req.is_write == 1'b1;
+			req.address[31:2] == req_address[31:2];
+			req.data == req_data;
+			req.select == 4'hF;
 		};
-		// return ok;
 	endfunction
 	 
 endclass

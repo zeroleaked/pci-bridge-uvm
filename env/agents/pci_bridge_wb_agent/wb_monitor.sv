@@ -1,30 +1,31 @@
-`ifndef PCI_MONITOR 
-`define PCI_MONITOR
+`ifndef WB_MONITOR 
+`define WB_MONITOR
 
-class pci_monitor extends uvm_monitor;
+class wb_monitor extends uvm_monitor;
+
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Virtual interface
 	///////////////////////////////////////////////////////////////////////////////
-	virtual pci_bridge_pci_interface vif;
+	virtual pci_bridge_wb_interface vif;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Analysis ports and exports 
 	///////////////////////////////////////////////////////////////////////////////
-	uvm_analysis_port #(pci_transaction) mon2sb_port;
+	uvm_analysis_port #(wb_transaction) mon2sb_port;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of transaction item 
 	///////////////////////////////////////////////////////////////////////////////
-	pci_transaction tx;
+	wb_transaction trans;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of component	utils 
 	///////////////////////////////////////////////////////////////////////////////
-	`uvm_component_utils(pci_monitor)
+	`uvm_component_utils(wb_monitor)
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new 
 	// Description : constructor
 	///////////////////////////////////////////////////////////////////////////////
 	function new (string name, uvm_component parent);
 		super.new(name, parent);
-		tx = new();
+		trans = new();
 		mon2sb_port = new("mon2sb_port", this);
 	endfunction : new
 	///////////////////////////////////////////////////////////////////////////////
@@ -33,7 +34,7 @@ class pci_monitor extends uvm_monitor;
 	///////////////////////////////////////////////////////////////////////////////
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		if(!uvm_config_db#(virtual pci_bridge_pci_interface)::get(this, "", "intf", vif))
+		if(!uvm_config_db#(virtual pci_bridge_wb_interface)::get(this, "", "intf", vif))
 			 `uvm_fatal("NOVIF",{"virtual interface must be set for: ",get_full_name(),".vif"});
 	endfunction: build_phase
 	///////////////////////////////////////////////////////////////////////////////
@@ -42,8 +43,13 @@ class pci_monitor extends uvm_monitor;
 	///////////////////////////////////////////////////////////////////////////////
 	virtual task run_phase(uvm_phase phase);
 		forever begin
-			wait(!vif.rc_cb.FRAME); // Wait for start of transaction
+			wait(vif.rc_cb.CYC_I); // Wait for start of transaction
+			trans = wb_transaction::type_id::create("wb_act_trans", this);
 			collect_transaction();
+			mon2sb_port.write(trans);
+			// `uvm_info(get_type_name(), "monitor tx", UVM_LOW)
+			// trans.print();
+
 		end
 	endtask : run_phase
 	///////////////////////////////////////////////////////////////////////////////
@@ -51,49 +57,14 @@ class pci_monitor extends uvm_monitor;
 	// Description : Main collection task
 	///////////////////////////////////////////////////////////////////////////////
 	task collect_transaction();
-		bit [31:0] addr;
-		
-		collect_address_phase();
-		if (tx == null) return;
-		
-		collect_data_phase();
+		trans.is_write = vif.rc_cb.WE_I;
+		trans.address = vif.rc_cb.ADR_I;
+		trans.select = vif.rc_cb.SEL_I;
+		wait(vif.rc_cb.ACK_O);
+		trans.data = vif.rc_cb.SDAT_I;
+		@(vif.rc_cb); // Wait for next clock
+	endtask
 
-		// `uvm_info(get_type_name(), "monitor tx", UVM_LOW)
-		// tx.print();
-		mon2sb_port.write(tx);
-	endtask
-	///////////////////////////////////////////////////////////////////////////////
-	// Method name : collect_address_phase 
-	// Description : Collect address phase information
-	///////////////////////////////////////////////////////////////////////////////
-	task collect_address_phase();
-		bit [3:0] command = vif.rc_cb.CBE;
-		tx = pci_transaction::type_id::create("tx");
-		$cast(tx.command, command);
-		tx.address = vif.rc_cb.AD;
-		if (!vif.rc_cb.GNT) tx.trans_type = PCI_TARGET;
-		else tx.trans_type = PCI_INITIATOR;
-		@(vif.rc_cb); // Wait for next clock
-	endtask
-	///////////////////////////////////////////////////////////////////////////////
-	// Method name : collect_data_phase 
-	// Description : Monitor data phase
-	///////////////////////////////////////////////////////////////////////////////
-	task collect_data_phase();
-		int timeout_count = 0;
-		// Wait for target ready with timeout
-		while (vif.rc_cb.DEVSEL | vif.rc_cb.TRDY) begin
-			@(vif.rc_cb);
-			timeout_count++;
-			if (timeout_count >= 16) begin
-				break;
-			end 
-		end
-		// Collect data if target responded in time
-		tx.data = vif.rc_cb.AD;
-		tx.byte_en = vif.rc_cb.CBE;
-		@(vif.rc_cb); // Wait for next clock
-	endtask
-endclass : pci_monitor
+endclass : wb_monitor
 
 `endif

@@ -1,7 +1,7 @@
-`ifndef PCI_BRIDGE_API_SEQ_PKG
-`define PCI_BRIDGE_API_SEQ_PKG
+`ifndef PCI_API_SEQ_LIST
+`define PCI_API_SEQ_LIST
 
-package pci_api_seq_pkg;
+package pci_api_seq_list;
  
 	import uvm_pkg::*;
 	`include "uvm_macros.svh"
@@ -13,6 +13,7 @@ package pci_api_seq_pkg;
 	`include "pci_config_write_seq.sv"
 	`include "pci_memory_read_seq.sv"
 	`include "pci_memory_write_seq.sv"
+	`include "pci_target_seq.sv"
 
 endpackage
 

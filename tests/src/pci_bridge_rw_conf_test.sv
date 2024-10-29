@@ -11,6 +11,7 @@ class pci_bridge_rw_conf_test extends uvm_test;
 	pci_bridge_environment	env;
 	pci_init_seq		pci_init_seq_i;
 	pci_wb_image_config_seq		pci_wb_image_config_seq_i;
+	bridge_wb2pci_vseq bridge_wb2pci_vseq_i;
 	////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Decription: Constructor 
@@ -28,6 +29,7 @@ class pci_bridge_rw_conf_test extends uvm_test;
 		env = pci_bridge_environment::type_id::create("env", this);
 		pci_init_seq_i = pci_init_seq::type_id::create("seq");
 		pci_wb_image_config_seq_i = pci_wb_image_config_seq::type_id::create("seq");
+		bridge_wb2pci_vseq_i = bridge_wb2pci_vseq::type_id::create("seq");
 	endfunction : build_phase
 	////////////////////////////////////////////////////////////////////
 	// Method name : run_phase 
@@ -35,12 +37,18 @@ class pci_bridge_rw_conf_test extends uvm_test;
 	////////////////////////////////////////////////////////////////////
 	task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
-			pci_init_seq_i.start(env.pci_agent.sequencer);
-			pci_wb_image_config_seq_i.start(env.pci_agent.sequencer);
+
+		pci_init_seq_i.start(env.pci_agent.sequencer);
+		pci_wb_image_config_seq_i.start(env.pci_agent.sequencer);
+		// wb_pci_rw_seq_i.start(env.wb_agent.sequencer);
+		bridge_wb2pci_vseq_i.wb_sequencer = env.wb_agent.sequencer;
+		bridge_wb2pci_vseq_i.pci_sequencer = env.pci_agent.sequencer;
+		bridge_wb2pci_vseq_i.start(null);
+		
 		phase.drop_objection(this);
 		phase.phase_done.set_drain_time(this, 1000ns);
 	endtask : run_phase
- 
+
 endclass : pci_bridge_rw_conf_test
 
 `endif
