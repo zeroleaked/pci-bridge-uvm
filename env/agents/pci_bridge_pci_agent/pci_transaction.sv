@@ -9,6 +9,7 @@ class pci_transaction extends uvm_sequence_item;
 	rand bit [31:0] data;
 	rand bit [3:0] byte_en;
 	rand pci_cmd_t command;
+	rand pci_trans_type_t trans_type;
 	//////////////////////////////////////////////////////////////////////////////
 	//Declaration of Utility and Field macros,
 	//////////////////////////////////////////////////////////////////////////////
@@ -17,6 +18,7 @@ class pci_transaction extends uvm_sequence_item;
 		`uvm_field_int(data, UVM_ALL_ON)
 		`uvm_field_int(byte_en, UVM_ALL_ON)
     	`uvm_field_enum(pci_cmd_t, command, UVM_ALL_ON)
+    	`uvm_field_enum(pci_trans_type_t, trans_type, UVM_ALL_ON)
 	`uvm_object_utils_end
 	//////////////////////////////////////////////////////////////////////////////
 	//Constructor

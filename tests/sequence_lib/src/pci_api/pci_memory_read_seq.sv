@@ -28,6 +28,7 @@ class pci_memory_read_seq extends pci_api_base_seq;
 			req.command == MEM_READ;
 			req.address == req_address;
 			req.byte_en	== 4'h0;
+			req.trans_type == PCI_INITIATOR;
 		};
 	endfunction
 	 

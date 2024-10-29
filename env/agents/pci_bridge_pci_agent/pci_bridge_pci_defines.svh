@@ -10,9 +10,8 @@ typedef enum bit [3:0] {
 } pci_cmd_t;
 
 typedef enum {
-	TRANS_OK,
-	TRANS_TIMEOUT,
-	TRANS_ERROR
-} trans_status_e;
+	PCI_INITIATOR, // testbench acting as PCI initiator
+	PCI_TARGET // testbench acting as PCI target
+} pci_trans_type_t;
 
 `endif // PCI_BRIDGE_PCI_DEFINES_SVH

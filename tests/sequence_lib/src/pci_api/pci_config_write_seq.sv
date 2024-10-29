@@ -22,6 +22,7 @@ class pci_config_write_seq extends pci_api_base_seq;
 			req.address == req_address;
 			req.data == req_data;
 			req.byte_en	== 4'h0;
+			req.trans_type == PCI_INITIATOR;
 		};
 	endfunction
 	 

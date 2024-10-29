@@ -109,6 +109,7 @@ class pci_bridge_ref_model extends uvm_component;
 			pci_trans.data = wb_trans.data;
 			pci_trans.byte_en = ~wb_trans.select; // pci is active low, wb is active high
 			pci_trans.command = MEM_WRITE;
+			pci_trans.trans_type = PCI_TARGET;
 			pci_rm2sb_port.write(pci_trans);
 		end
 	endtask
