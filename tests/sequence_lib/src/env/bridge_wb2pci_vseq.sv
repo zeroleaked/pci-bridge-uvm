@@ -29,7 +29,6 @@ class bridge_wb2pci_vseq extends uvm_sequence#(uvm_sequence_item);
 		wb_write.write_transaction(32'h3, 32'h12153524);
 
 		pci_target = pci_target_seq::type_id::create("req");
-		pci_target.configure(pci_sequencer);
 		pci_target.start(pci_sequencer);
     	`uvm_info(get_type_name(), "normal single memory write through wb image to pci sequence completed", UVM_LOW)
 
