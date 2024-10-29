@@ -44,6 +44,7 @@ class wb_monitor extends uvm_monitor;
 	virtual task run_phase(uvm_phase phase);
 		forever begin
 			wait(vif.rc_cb.CYC_I); // Wait for start of transaction
+			trans = wb_transaction::type_id::create("wb_act_trans", this);
 			collect_transaction();
 			mon2sb_port.write(trans);
 			// `uvm_info(get_type_name(), "monitor tx", UVM_LOW)

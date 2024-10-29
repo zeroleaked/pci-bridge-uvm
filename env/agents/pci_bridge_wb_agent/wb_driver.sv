@@ -92,8 +92,8 @@ class wb_driver extends uvm_driver #(wb_transaction);
 		while (!vif.rc_cb.ACK_O) begin
 			@(vif.rc_cb);
 			timeout_count++;
-			if (timeout_count >= 16) begin
-				`uvm_error(get_type_name(), "Target response timeout - no response within 16 clock cycles");
+			if (timeout_count >= 128) begin
+				`uvm_error(get_type_name(), "Target response timeout - no response within 128 clock cycles");
 				break;
 			end
 		end

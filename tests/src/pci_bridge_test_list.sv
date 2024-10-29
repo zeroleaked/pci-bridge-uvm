@@ -10,6 +10,7 @@ package pci_bridge_test_list;
  import pci_bridge_seq_list::*;
  import pci_bridge_pkg::*;
  import wb_api_seq_pkg::*;
+ import bridge_seq_list::*;
 
  //////////////////////////////////////////////////////////////////////////////
  // including pci_bridge test list

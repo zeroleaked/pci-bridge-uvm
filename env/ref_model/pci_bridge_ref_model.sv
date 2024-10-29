@@ -104,6 +104,7 @@ class pci_bridge_ref_model extends uvm_component;
 		is_in_range = (wb_trans.address & mask) == (img_addr & mask);
 		// if in range, propagate to pci bus
 		if (is_in_range) begin
+			pci_trans = pci_transaction::type_id::create("pci_exp_trans", this);
 			pci_trans.address = wb_trans.address & mask;
 			pci_trans.data = wb_trans.data;
 			pci_trans.byte_en = ~wb_trans.select; // pci is active low, wb is active high
