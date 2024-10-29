@@ -15,7 +15,7 @@ class pci_bridge_ref_model extends uvm_component;
 	uvm_analysis_port#(pci_transaction) pci_rm2sb_port;
 	uvm_analysis_port#(wb_transaction) wb_rm2sb_port;
 	// input queues
-	pci_transaction pci_queue[$];
+	pci_transaction pci_initiator_queue[$], pci_target_queue[$];
 	wb_transaction wb_queue[$];
 
 	pci_transaction pci_trans;
@@ -46,7 +46,10 @@ class pci_bridge_ref_model extends uvm_component;
 	// Description : Analysis port write implementations
 	///////////////////////////////////////////////////////////////////////////////
 	function void write_pci(pci_transaction trans);
-		pci_queue.push_back(trans);
+		if (trans.trans_type == PCI_INITIATOR)
+			pci_initiator_queue.push_back(trans);
+		else
+			pci_target_queue.push_back(trans);
 	endfunction: write_pci
 	function void write_wb(wb_transaction trans);
 		wb_queue.push_back(trans);
@@ -57,10 +60,10 @@ class pci_bridge_ref_model extends uvm_component;
 	//////////////////////////////////////////////////////////////////////////////
 	task run_phase(uvm_phase phase);
 		forever begin
-			wait((pci_queue.size() > 0) || (wb_queue.size() > 0));
+			wait((pci_initiator_queue.size() > 0) || (wb_queue.size() > 0));
 			
-			if (pci_queue.size() > 0) begin
-				pci_trans = pci_queue.pop_front();
+			if (pci_initiator_queue.size() > 0) begin
+				pci_trans = pci_initiator_queue.pop_front();
 				pci_expected_transaction();
 				pci_rm2sb_port.write(pci_trans);
 				// `uvm_info(get_type_name(), "rm tx", UVM_LOW)
@@ -102,9 +105,10 @@ class pci_bridge_ref_model extends uvm_component;
 		mask = register_handler.read_config(W_AM1);
 		img_addr = register_handler.read_config(W_BA1);
 		is_in_range = (wb_trans.address & mask) == (img_addr & mask);
-		// if in range, propagate to pci bus
+		// if in range, wait for driver response to pci bus
 		if (is_in_range) begin
-			pci_trans = pci_transaction::type_id::create("pci_exp_trans", this);
+			wait (pci_target_queue.size() > 0);
+			pci_trans = pci_target_queue.pop_front();
 			pci_trans.address = wb_trans.address & mask;
 			pci_trans.data = wb_trans.data;
 			pci_trans.byte_en = ~wb_trans.select; // pci is active low, wb is active high

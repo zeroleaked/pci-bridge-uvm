@@ -41,89 +41,69 @@ class pci_driver extends uvm_driver #(pci_transaction);
 		bit is_tb_master = 1'b1;
 		reset();
 		forever begin
-			// Handle bus arbitration (REQ#/GNT#)
-			if (!vif.dr_cb.REQ) begin
-				repeat(5) @(vif.dr_cb);
-				// Grant
-				is_tb_master = 1'b0;
-				vif.dr_cb.GNT <= 0;
-			end else if (vif.dr_cb.REQ) begin
-				// Remove grant when request is deasserted
-				vif.dr_cb.GNT <= 1;
-				is_tb_master = 1'b1;
-			end
+			seq_item_port.get_next_item(req);
 
-			if (is_tb_master) begin
-				// Process initiator transaction
-				seq_item_port.try_next_item(req);
-				if (req != null) begin
-					// `uvm_info(get_type_name(), "driver rx", UVM_LOW)
-					// req.print();
-					
-					if (req.is_config()) vif.dr_cb.IDSEL <= 1'b1;
-					drive_address_phase(req);
-
-					if (req.is_write()) vif.dr_cb.AD <= req.data;  // Drive data
-					else vif.dr_cb.AD <= 32'bz;    // Release AD bus
-					drive_data_phase(req);
-					
-					cleanup_transaction();
-					
-					// driver to reference model
-					$cast(rsp,req.clone());
-					rsp.set_id_info(req);
-					drv2rm_port.write(rsp);
-					seq_item_port.item_done();
-					seq_item_port.put(rsp);
-				end
-			end
-			else begin // DUT is master
-				// Wait for frame from master
-				fork: wait_frame
-					wait (!vif.dr_cb.FRAME);
-					repeat(5) @(vif.dr_cb);
-				join_any
-				disable wait_frame;
-				if (!vif.dr_cb.FRAME) begin
-					fork: wait_irdy
-						wait (!vif.dr_cb.IRDY);
-						repeat(16) @(vif.dr_cb);
-					join_any
-					disable wait_irdy;
-					if (!vif.dr_cb.IRDY) begin
-						vif.dr_cb.DEVSEL <= 0;
-						vif.dr_cb.TRDY <= 0;
-						@(vif.dr_cb);
-						vif.dr_cb.DEVSEL <= 1;
-						vif.dr_cb.TRDY <= 1;
-						@(vif.dr_cb);
-					end
-				end
-				cleanup_transaction();
-			end
-			@(vif.dr_cb);
+			case (req.trans_type)
+				PCI_INITIATOR: drive_initiator_transaction(req);
+				PCI_TARGET: drive_target_transaction(req);
+			endcase
+			
+			cleanup_transaction();
+			// driver to reference model
+			$cast(rsp,req.clone());
+			rsp.set_id_info(req);
+			drv2rm_port.write(rsp);
+			seq_item_port.item_done();
+			seq_item_port.put(rsp);
+			
 		end
 	endtask : run_phase
 	//////////////////////////////////////////////////////////////////////////////
-	// Method name : wait_with_timeout 
-	// Description : Task to monitor for timeout condition with configurable message
+	// Method name : drive_initiator_transaction 
+	// Description : Handle initiator mode transactions
 	//////////////////////////////////////////////////////////////////////////////
-	task wait_with_timeout(
-    	const ref logic signal_to_monitor,
-		input string timeout_msg,
-		output bit is_timeout,
-		input int timeout_cycles = 16
-	);
-		int timeout_count = 0;
-		is_timeout = 0;
+	task drive_initiator_transaction(pci_transaction req);
+		if (req.is_config()) vif.dr_cb.IDSEL <= 1'b1;
+		drive_address_phase(req);
 
-		while (signal_to_monitor) begin
-			@(vif.dr_cb);
-			timeout_count++;
-			if (timeout_count >= timeout_cycles) begin
-				`uvm_error(get_type_name(), $sformatf("waited for %s - no transaction within %0d clock cycles", timeout_msg, timeout_cycles));
-				is_timeout = 1;
-				break;
+		if (req.is_write()) vif.dr_cb.AD <= req.data;  // Drive data
+		else vif.dr_cb.AD <= 32'bz;    // Release AD bus
+		drive_data_phase(req);
+	endtask
+	//////////////////////////////////////////////////////////////////////////////
+	// Method name : drive_target_transaction 
+	// Description : Handle target mode transactions
+	//////////////////////////////////////////////////////////////////////////////
+	task drive_target_transaction(pci_transaction req);
+		fork: wait_req
+			wait (!vif.dr_cb.REQ);
+			repeat(16) @(vif.dr_cb);
+		join_any
+		disable wait_req;
+		if (!vif.dr_cb.REQ) begin
+			repeat(5) @(vif.dr_cb);
+			// Grant
+			vif.dr_cb.GNT <= 0;
+		end
+
+		fork: wait_frame
+			wait (!vif.dr_cb.FRAME);
+			repeat(5) @(vif.dr_cb);
+		join_any
+		disable wait_frame;
+		if (!vif.dr_cb.FRAME) begin
+			fork: wait_irdy
+				wait (!vif.dr_cb.IRDY);
+				repeat(16) @(vif.dr_cb);
+			join_any
+			disable wait_irdy;
+			if (!vif.dr_cb.IRDY) begin
+				vif.dr_cb.DEVSEL <= 0;
+				vif.dr_cb.TRDY <= 0;
+				@(vif.dr_cb);
+				vif.dr_cb.DEVSEL <= 1;
+				vif.dr_cb.TRDY <= 1;
+				@(vif.dr_cb);
 			end
 		end
 	endtask

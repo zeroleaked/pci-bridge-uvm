@@ -16,7 +16,7 @@ package bridge_seq_list;
 	// including pci_bridge test list
 	//////////////////////////////////////////////////////////////////////////////
 
-	`include "bridge_wb_pci_vseq.sv"
+	`include "bridge_wb2pci_vseq.sv"
 
 endpackage
 
