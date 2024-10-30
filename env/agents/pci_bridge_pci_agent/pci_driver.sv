@@ -98,6 +98,8 @@ class pci_driver extends uvm_driver #(pci_transaction);
 			join_any
 			disable wait_irdy;
 			if (!vif.dr_cb.IRDY) begin
+				if (!req.is_write())
+					vif.dr_cb.AD <= req.data;	
 				vif.dr_cb.DEVSEL <= 0;
 				vif.dr_cb.TRDY <= 0;
 				@(vif.dr_cb);

@@ -23,16 +23,24 @@ class wb_read_seq extends wb_api_base_seq;
 	// Method name : do_randomize 
 	// Description : Setup randomize constraints for config read
 	//////////////////////////////////////////////////////////////////////////////
-	virtual function bit do_randomize();
+	function bit do_randomize();
 		return req.randomize() with {
 			req.is_write == 1'b0;
 			req.address[31:2] == req_address[31:2];
 			req.select == 4'hF;
 		};
 	endfunction
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : read_transaction
+	// Description : do a read wb transaction
+	//////////////////////////////////////////////////////////////////////////////
+	task read_transaction(input bit [31:0] address);
+		set_address(address);
+		is_write = 0;
+		start(sequencer);
+	endtask
 	 
 endclass
 
 `endif
-
 

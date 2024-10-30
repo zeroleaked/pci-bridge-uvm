@@ -23,7 +23,7 @@ class wb_write_seq extends wb_api_base_seq;
 	// Method name : do_randomize 
 	// Description : Setup randomize constraints for config read
 	//////////////////////////////////////////////////////////////////////////////
-	virtual function bit do_randomize();
+	function bit do_randomize();
 		return req.randomize() with {
 			req.is_write == 1'b1;
 			req.address[31:2] == req_address[31:2];
@@ -31,9 +31,18 @@ class wb_write_seq extends wb_api_base_seq;
 			req.select == 4'hF;
 		};
 	endfunction
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : write_transaction
+	// Description : do a write wb transaction
+	//////////////////////////////////////////////////////////////////////////////
+	task write_transaction(input bit [31:0] address, data);
+		set_address(address);
+		req_data = data;
+		is_write = 1;
+		start(sequencer);
+	endtask
 	 
 endclass
 
 `endif
-
 
