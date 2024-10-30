@@ -2,7 +2,6 @@
 `define WB_API_BASE_SEQ
 class wb_api_base_seq extends uvm_sequence#(wb_transaction);
 	bit [31:0] req_address;
-	bit [31:0] req_data;
 	bit is_write;
 	uvm_sequencer_base sequencer;
 	///////////////////////////////////////////////////////////////////////////////
@@ -10,7 +9,6 @@ class wb_api_base_seq extends uvm_sequence#(wb_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	`uvm_object_utils_begin(wb_api_base_seq)
 		`uvm_field_int(req_address, UVM_ALL_ON)
-		`uvm_field_int(req_data, UVM_ALL_ON)
 	`uvm_object_utils_end
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
