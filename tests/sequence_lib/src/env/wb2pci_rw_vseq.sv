@@ -25,7 +25,7 @@ class wb2pci_rw_vseq extends uvm_sequence#(uvm_sequence_item);
 		wb_read_seq wb_read;
 		pci_resp_mem_r_seq pci_read_response;
 		
-		bit [31:0] test_addr;
+		bit [31:0] test_addr, test_data;
 
 		test_addr = 32'h0;
 
@@ -38,6 +38,8 @@ class wb2pci_rw_vseq extends uvm_sequence#(uvm_sequence_item);
 		pci_write_response = pci_resp_mem_w_seq::type_id::create("req");
 		pci_write_response.configure(pci_sequencer);
 		pci_write_response.write_response();
+		
+		test_data = pci_write_response.rsp.data;
     	`uvm_info(get_type_name(), "normal single memory write through wb image to pci sequence completed", UVM_LOW)
 
 		// unlike write transactions, wb read transactions ask for retry until
@@ -49,7 +51,8 @@ class wb2pci_rw_vseq extends uvm_sequence#(uvm_sequence_item);
 
 		fork
 			wb_read.read_transaction(test_addr);
-			pci_read_response.read_response();
+			// pci_read_response.read_response();
+			pci_read_response.read_response_with_data(test_data);
 		join
     	`uvm_info(get_type_name(), "normal single memory read through wb image to pci sequence completed", UVM_LOW)
 

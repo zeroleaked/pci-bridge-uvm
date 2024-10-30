@@ -1,6 +1,8 @@
 `ifndef PCI_RESPONSE_MEMORY_READ_SEQ
 `define PCI_RESPONSE_MEMORY_READ_SEQ
 class pci_resp_mem_r_seq extends pci_target_base_seq;
+	bit is_data;
+	bit [31:0] req_data;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
@@ -18,6 +20,8 @@ class pci_resp_mem_r_seq extends pci_target_base_seq;
 	//////////////////////////////////////////////////////////////////////////////
 	function bit do_randomize();
 		return req.randomize() with {
+			if (is_data)
+				req.data == req_data;
 			req.trans_type == PCI_TARGET;
 		};
 	endfunction
@@ -27,6 +31,17 @@ class pci_resp_mem_r_seq extends pci_target_base_seq;
 	//////////////////////////////////////////////////////////////////////////////
 	task read_response();
 		is_write = 0;
+		is_data = 0;
+		start(sequencer);
+	endtask
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : read_response_with_data
+	// Description : do a read pci response
+	//////////////////////////////////////////////////////////////////////////////
+	task read_response_with_data(input bit [31:0] data);
+		is_write = 0;
+		is_data = 1;
+		req_data = data;
 		start(sequencer);
 	endtask
 	 
