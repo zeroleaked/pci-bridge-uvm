@@ -69,6 +69,7 @@ class wb_driver extends uvm_driver #(wb_transaction);
 		vif.dr_cb.CYC_I <= 1'b0;
 		vif.dr_cb.STB_I <= 1'b0;
 		vif.dr_cb.WE_I <= 1'b0;
+		@(vif.dr_cb);
 	endtask
 	//////////////////////////////////////////////////////////////////////////////
 	// Method name : drive_address_phase 

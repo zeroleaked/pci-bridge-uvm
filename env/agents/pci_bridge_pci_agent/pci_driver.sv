@@ -92,6 +92,7 @@ class pci_driver extends uvm_driver #(pci_transaction);
 		join_any
 		disable wait_frame;
 		if (!vif.dr_cb.FRAME) begin
+			$cast(req.command, vif.dr_cb.CBE);
 			fork: wait_irdy
 				wait (!vif.dr_cb.IRDY);
 				repeat(16) @(vif.dr_cb);
@@ -99,7 +100,7 @@ class pci_driver extends uvm_driver #(pci_transaction);
 			disable wait_irdy;
 			if (!vif.dr_cb.IRDY) begin
 				if (!req.is_write())
-					vif.dr_cb.AD <= req.data;	
+					vif.dr_cb.AD <= req.data;
 				vif.dr_cb.DEVSEL <= 0;
 				vif.dr_cb.TRDY <= 0;
 				@(vif.dr_cb);

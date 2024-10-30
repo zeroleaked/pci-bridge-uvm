@@ -13,21 +13,11 @@ class pci_resp_mem_w_seq extends pci_target_base_seq;
 		super.new(name);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
-	// Method name : set_address 
-	// Description : override base set_address 
-	//////////////////////////////////////////////////////////////////////////////
-	task set_address(input bit [31:0] address);
-		this.req_address = address | W_BASE_ADDR_1;
-	endtask
-	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_randomize 
 	// Description : Setup randomize constraints for config read
 	//////////////////////////////////////////////////////////////////////////////
 	function bit do_randomize();
 		return req.randomize() with {
-			req.command == MEM_WRITE;
-			req.address[31:2] == req_address[31:2];
-			req.byte_en	== 4'h0;
 			req.trans_type == PCI_TARGET;
 		};
 	endfunction
@@ -35,8 +25,7 @@ class pci_resp_mem_w_seq extends pci_target_base_seq;
 	// Method name : write_response
 	// Description : do a write pci response
 	//////////////////////////////////////////////////////////////////////////////
-	task write_response(input bit [31:0] address);
-		set_address(address);
+	task write_response();
 		is_write = 1;
 		start(sequencer);
 	endtask

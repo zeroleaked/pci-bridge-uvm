@@ -13,24 +13,12 @@ class pci_resp_mem_r_seq extends pci_target_base_seq;
 		super.new(name);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
-	// Method name : set_address 
-	// Description : override base set_address 
-	//////////////////////////////////////////////////////////////////////////////
-	task set_address(input bit [31:0] address);
-		this.req_address = address | W_BASE_ADDR_1;
-	endtask
-	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_randomize 
 	// Description : Setup randomize constraints for config read
 	//////////////////////////////////////////////////////////////////////////////
 	function bit do_randomize();
-			`uvm_info(get_type_name(), $sformatf("req_data:%h", req_data), UVM_LOW)
-
 		return req.randomize() with {
-			req.command == MEM_READ;
-			req.address[31:2] == req_address[31:2];
 			req.data == req_data;
-			req.byte_en	== 4'h0;
 			req.trans_type == PCI_TARGET;
 		};
 	endfunction
@@ -38,8 +26,7 @@ class pci_resp_mem_r_seq extends pci_target_base_seq;
 	// Method name : read_response
 	// Description : do a read pci response
 	//////////////////////////////////////////////////////////////////////////////
-	task read_response(input bit [31:0] address, data);
-		set_address(address);
+	task read_response(input bit [31:0] data);
 		req_data = data;
 		is_write = 0;
 		start(sequencer);
