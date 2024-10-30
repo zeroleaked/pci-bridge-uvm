@@ -1,13 +1,11 @@
 `ifndef WB2PCI_RW_VSEQ
 `define WB2PCI_RW_VSEQ
-class wb2pci_rw_vseq extends uvm_sequence#(uvm_sequence_item);
+class wb2pci_rw_vseq extends bridge_base_vseq;
 	// Single normal read and write from wishbone to pci
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
 	`uvm_object_utils(wb2pci_rw_vseq)
-	pci_sequencer pci_sequencer;
-	wb_sequencer wb_sequencer;
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Description : sequence constructor
@@ -19,7 +17,7 @@ class wb2pci_rw_vseq extends uvm_sequence#(uvm_sequence_item);
 	// Method name : body 
 	// Description : write to pci
 	//////////////////////////////////////////////////////////////////////////////
-	virtual task body();
+	task body();
 		wb_write_seq wb_write;
 		pci_resp_mem_w_seq pci_write_response;
 		wb_read_seq wb_read;
@@ -54,8 +52,6 @@ class wb2pci_rw_vseq extends uvm_sequence#(uvm_sequence_item);
 			pci_read_response.read_response_with_data(test_data);
 		join
     	`uvm_info(get_type_name(), "normal single memory read through wb image to pci sequence completed", UVM_LOW)
-
-		
 	endtask
 
 endclass

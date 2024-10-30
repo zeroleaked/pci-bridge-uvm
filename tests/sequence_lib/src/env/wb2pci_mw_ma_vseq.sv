@@ -1,13 +1,11 @@
 `ifndef WB2PCI_MW_MA_VSEQ
 `define WB2PCI_MW_MA_VSEQ
-class wb2pci_mw_ma_vseq extends uvm_sequence#(uvm_sequence_item);
+class wb2pci_mw_ma_vseq extends bridge_base_vseq;
 	// Multiple normal write, different address from wishbone to pci
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
 	`uvm_object_utils(wb2pci_mw_ma_vseq)
-	pci_sequencer pci_sequencer;
-	wb_sequencer wb_sequencer;
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Description : sequence constructor

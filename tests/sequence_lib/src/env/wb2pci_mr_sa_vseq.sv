@@ -1,13 +1,11 @@
 `ifndef WB2PCI_MR_SA_VSEQ
 `define WB2PCI_MR_SA_VSEQ
-class wb2pci_mr_sa_vseq extends uvm_sequence#(uvm_sequence_item);
+class wb2pci_mr_sa_vseq extends bridge_base_vseq;
 	// Multiple read, single address, multiple data
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
 	`uvm_object_utils(wb2pci_mr_sa_vseq)
-	pci_sequencer pci_sequencer;
-	wb_sequencer wb_sequencer;
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Description : sequence constructor

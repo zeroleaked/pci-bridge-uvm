@@ -29,19 +29,13 @@ class wb_image_vseq extends uvm_sequence#(uvm_sequence_item);
 		image_cfg_seq.start(pci_sequencer);
 
 		rw_vseq = wb2pci_rw_vseq::type_id::create("req");
-		rw_vseq.wb_sequencer = wb_sequencer;
-		rw_vseq.pci_sequencer = pci_sequencer;
-		rw_vseq.start(null);
+		rw_vseq.start_with(pci_sequencer, wb_sequencer);
 
 		mr_sa_vseq = wb2pci_mr_sa_vseq::type_id::create("req");
-		mr_sa_vseq.wb_sequencer = wb_sequencer;
-		mr_sa_vseq.pci_sequencer = pci_sequencer;
-		mr_sa_vseq.start(null);
+		mr_sa_vseq.start_with(pci_sequencer, wb_sequencer);
 
 		mw_ma_vseq = wb2pci_mw_ma_vseq::type_id::create("req");
-		mw_ma_vseq.wb_sequencer = wb_sequencer;
-		mw_ma_vseq.pci_sequencer = pci_sequencer;
-		mw_ma_vseq.start(null);
+		mw_ma_vseq.start_with(pci_sequencer, wb_sequencer);
 
     	`uvm_info(get_type_name(), "wb image test sequence completed", UVM_LOW)
 		
