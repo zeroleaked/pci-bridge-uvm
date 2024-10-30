@@ -2,7 +2,6 @@
 `define PCI_TARGET_BASE_SEQ
 class pci_target_base_seq extends uvm_sequence#(pci_transaction);
 	bit [31:0] req_address;
-	bit [31:0] req_data;
 	bit is_write;
 	uvm_sequencer_base sequencer;
 	///////////////////////////////////////////////////////////////////////////////
@@ -10,7 +9,6 @@ class pci_target_base_seq extends uvm_sequence#(pci_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	`uvm_object_utils_begin(pci_target_base_seq)
 		`uvm_field_int(req_address, UVM_ALL_ON)
-		`uvm_field_int(req_data, UVM_ALL_ON)
 	`uvm_object_utils_end
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new

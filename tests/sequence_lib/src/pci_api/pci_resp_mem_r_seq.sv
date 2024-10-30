@@ -18,7 +18,6 @@ class pci_resp_mem_r_seq extends pci_target_base_seq;
 	//////////////////////////////////////////////////////////////////////////////
 	function bit do_randomize();
 		return req.randomize() with {
-			req.data == req_data;
 			req.trans_type == PCI_TARGET;
 		};
 	endfunction
@@ -26,8 +25,7 @@ class pci_resp_mem_r_seq extends pci_target_base_seq;
 	// Method name : read_response
 	// Description : do a read pci response
 	//////////////////////////////////////////////////////////////////////////////
-	task read_response(input bit [31:0] data);
-		req_data = data;
+	task read_response();
 		is_write = 0;
 		start(sequencer);
 	endtask

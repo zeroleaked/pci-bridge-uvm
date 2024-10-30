@@ -80,7 +80,7 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 			`uvm_error(get_type_name(), $sformatf("PCI transaction mismatch:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()))
 			error = 1;
 		end else begin
-			`uvm_info(get_type_name(), $sformatf("PCI transaction match %s 0x%h", act_trans.command.name(), act_trans.address), UVM_LOW)
+			`uvm_info(get_type_name(), $sformatf("PCI transaction match %s 0x%h: 0x%h", act_trans.command.name(), act_trans.address, act_trans.data), UVM_LOW)
 		end
 	endtask
 
@@ -96,7 +96,7 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 			`uvm_error(get_type_name(), $sformatf("WB transaction mismatch:\nExpected:\n%s\nActual:\n%s", exp_trans.sprint(), act_trans.sprint()))
 			error = 1;
 		end else begin
-			`uvm_info(get_type_name(), $sformatf("WB transaction match %d 0x%h", act_trans.is_write, act_trans.address), UVM_LOW)
+			`uvm_info(get_type_name(), $sformatf("WB transaction match %d 0x%h: 0x%h", act_trans.is_write, act_trans.address, act_trans.data), UVM_LOW)
 		end
 	endtask	
 

@@ -1,7 +1,7 @@
 `ifndef WB2PCI_RW_VSEQ
 `define WB2PCI_RW_VSEQ
 class wb2pci_rw_vseq extends uvm_sequence#(uvm_sequence_item);
-	// Initialize the basic Config Registers of the PCI bridge
+	// Single normal read and write from wishbone to pci
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
@@ -25,15 +25,14 @@ class wb2pci_rw_vseq extends uvm_sequence#(uvm_sequence_item);
 		wb_read_seq wb_read;
 		pci_resp_mem_r_seq pci_read_response;
 		
-		bit [31:0] test_addr, test_data;
+		bit [31:0] test_addr;
 
 		test_addr = 32'h0;
-		test_data = 32'h12153524;
 
 		// wb master
 		wb_write = wb_write_seq::type_id::create("req");
 		wb_write.configure(wb_sequencer);
-		wb_write.write_transaction(test_addr, test_data);
+		wb_write.write_transaction(test_addr);
 
 		// pci target
 		pci_write_response = pci_resp_mem_w_seq::type_id::create("req");
@@ -50,7 +49,7 @@ class wb2pci_rw_vseq extends uvm_sequence#(uvm_sequence_item);
 
 		fork
 			wb_read.read_transaction(test_addr);
-			pci_read_response.read_response(test_data);
+			pci_read_response.read_response();
 		join
     	`uvm_info(get_type_name(), "normal single memory read through wb image to pci sequence completed", UVM_LOW)
 
