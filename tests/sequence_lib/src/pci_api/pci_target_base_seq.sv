@@ -1,6 +1,6 @@
-`ifndef WB_API_BASE_SEQ
-`define WB_API_BASE_SEQ
-class wb_api_base_seq extends uvm_sequence#(wb_transaction);
+`ifndef PCI_TARGET_BASE_SEQ
+`define PCI_TARGET_BASE_SEQ
+class pci_target_base_seq extends uvm_sequence#(pci_transaction);
 	bit [31:0] req_address;
 	bit [31:0] req_data;
 	bit is_write;
@@ -8,7 +8,7 @@ class wb_api_base_seq extends uvm_sequence#(wb_transaction);
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_object_utils_begin(wb_api_base_seq)
+	`uvm_object_utils_begin(pci_target_base_seq)
 		`uvm_field_int(req_address, UVM_ALL_ON)
 		`uvm_field_int(req_data, UVM_ALL_ON)
 	`uvm_object_utils_end
@@ -16,7 +16,7 @@ class wb_api_base_seq extends uvm_sequence#(wb_transaction);
 	// Method name : new
 	// Description : sequence constructor
 	//////////////////////////////////////////////////////////////////////////////
-	function new(string name = "wb_api_base_seq");
+	function new(string name = "pci_target_base_seq");
 		super.new(name);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ class wb_api_base_seq extends uvm_sequence#(wb_transaction);
 	// sequencer to driver
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
-		req = wb_transaction::type_id::create("req");
+		req = pci_transaction::type_id::create("req");
 		start_item(req);
 
 		assert(do_randomize())

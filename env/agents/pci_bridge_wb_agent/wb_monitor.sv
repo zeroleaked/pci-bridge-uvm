@@ -61,7 +61,10 @@ class wb_monitor extends uvm_monitor;
 		trans.address = vif.rc_cb.ADR_I;
 		trans.select = vif.rc_cb.SEL_I;
 		wait(vif.rc_cb.ACK_O);
-		trans.data = vif.rc_cb.SDAT_I;
+		if (trans.is_write)
+			trans.data = vif.rc_cb.SDAT_I;
+		else
+			trans.data = vif.rc_cb.SDAT_O;
 		@(vif.rc_cb); // Wait for next clock
 	endtask
 

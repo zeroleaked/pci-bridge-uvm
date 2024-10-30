@@ -1,15 +1,15 @@
-`ifndef PCI_MEMORY_READ_SEQ
-`define PCI_MEMORY_READ_SEQ
-class pci_memory_read_seq extends pci_initiator_base_seq;
+`ifndef WB_READ_SEQ
+`define WB_READ_SEQ
+class wb_read_seq extends wb_api_base_seq;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_object_utils(pci_memory_read_seq)
+	`uvm_object_utils(wb_read_seq)
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Description : sequence constructor
 	//////////////////////////////////////////////////////////////////////////////
-	function new(string name = "pci_memory_read_seq");
+	function new(string name = "wb_read_seq");
 		super.new(name);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@ class pci_memory_read_seq extends pci_initiator_base_seq;
 	// Description : override base set_address 
 	//////////////////////////////////////////////////////////////////////////////
 	task set_address(input bit [31:0] address);
-		this.req_address = address | TAR0_BASE_ADDR_0;
+		this.req_address = address | W_BASE_ADDR_1;
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_randomize 
@@ -25,15 +25,22 @@ class pci_memory_read_seq extends pci_initiator_base_seq;
 	//////////////////////////////////////////////////////////////////////////////
 	function bit do_randomize();
 		return req.randomize() with {
-			req.command == MEM_READ;
-			req.address == req_address;
-			req.byte_en	== 4'h0;
-			req.trans_type == PCI_INITIATOR;
+			req.is_write == 1'b0;
+			req.address[31:2] == req_address[31:2];
+			req.select == 4'hF;
 		};
 	endfunction
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : read_transaction
+	// Description : do a read wb transaction
+	//////////////////////////////////////////////////////////////////////////////
+	task read_transaction(input bit [31:0] address);
+		set_address(address);
+		is_write = 0;
+		start(sequencer);
+	endtask
 	 
 endclass
 
 `endif
-
 
