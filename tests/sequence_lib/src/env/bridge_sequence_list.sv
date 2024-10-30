@@ -17,12 +17,6 @@ package bridge_seq_list;
 	// including pci_bridge test list
 	//////////////////////////////////////////////////////////////////////////////
 
-	`include "bridge_base_vseq.sv"
-
-	`include "wb_pci_rw_vseq.sv"
-	`include "wb_same_addr_rd_vseq.sv"
-	`include "wb_multi_write_vseq.sv"
-
 	`include "wb_image_vseq.sv"
 
 endpackage
