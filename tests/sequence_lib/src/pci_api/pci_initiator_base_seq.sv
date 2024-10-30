@@ -1,13 +1,13 @@
-`ifndef PCI_API_BASE_SEQ
-`define PCI_API_BASE_SEQ
-class pci_api_base_seq extends uvm_sequence#(pci_transaction);
+`ifndef PCI_INITIATOR_BASE_SEQ
+`define PCI_INITIATOR_BASE_SEQ
+class pci_initiator_base_seq extends uvm_sequence#(pci_transaction);
 	bit [31:0] req_address;
 	bit [31:0] req_data;
 	uvm_sequencer_base sequencer;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_object_utils_begin(pci_api_base_seq)
+	`uvm_object_utils_begin(pci_initiator_base_seq)
 		`uvm_field_int(req_address, UVM_ALL_ON)
 		`uvm_field_int(req_data, UVM_ALL_ON)
 	`uvm_object_utils_end
@@ -15,7 +15,7 @@ class pci_api_base_seq extends uvm_sequence#(pci_transaction);
 	// Method name : new
 	// Description : sequence constructor
 	//////////////////////////////////////////////////////////////////////////////
-	function new(string name = "pci_api_base_seq");
+	function new(string name = "pci_initiator_base_seq");
 		super.new(name);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
