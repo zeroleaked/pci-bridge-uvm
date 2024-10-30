@@ -106,6 +106,7 @@ class pci_driver extends uvm_driver #(pci_transaction);
 				@(vif.dr_cb);
 				vif.dr_cb.DEVSEL <= 1;
 				vif.dr_cb.TRDY <= 1;
+				vif.dr_cb.AD <= 32'bz;
 				@(vif.dr_cb);
 			end
 		end
