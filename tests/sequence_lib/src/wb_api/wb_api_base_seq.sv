@@ -3,6 +3,7 @@
 class wb_api_base_seq extends uvm_sequence#(wb_transaction);
 	bit [31:0] req_address;
 	bit [31:0] req_data;
+	bit is_write;
 	uvm_sequencer_base sequencer;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
@@ -26,20 +27,29 @@ class wb_api_base_seq extends uvm_sequence#(wb_transaction);
 	virtual task body();
 		req = wb_transaction::type_id::create("req");
 		start_item(req);
-		assert(do_randomize())
-		else `uvm_error(get_type_name(), "Randomization failed")
+
+		if (is_write) begin
+			assert(req.randomize() with {
+				req.is_write == 1'b1;
+				req.address[31:2] == req_address[31:2];
+				req.data == req_data;
+				req.select == 4'hF;
+			})
+			else `uvm_error(get_type_name(), "Randomization failed")
+		end
+		else begin // read
+			assert(req.randomize() with {
+				req.is_write == 1'b0;
+				req.address[31:2] == req_address[31:2];
+				req.select == 4'hF;
+			})
+			else `uvm_error(get_type_name(), "Randomization failed")
+		end
+
 		finish_item(req);
 		get_response(rsp);
     	// `uvm_info(get_type_name(), "read config sequence completed", UVM_LOW)
 	endtask
-	///////////////////////////////////////////////////////////////////////////////
-	// Method name : do_randomize 
-	// Description : Pure virtual method - must be implemented by derived classes
-	//////////////////////////////////////////////////////////////////////////////
-	virtual function bit do_randomize();
-        `uvm_fatal(get_type_name(), "do_randomize() not implemented in derived class!")
-        return 0;
-	endfunction
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : set_address 
 	// Description : set address to one of the register
@@ -61,6 +71,7 @@ class wb_api_base_seq extends uvm_sequence#(wb_transaction);
 	task write_transaction(input bit [31:0] address, data);
 		set_address(address);
 		req_data = data;
+		is_write = 1;
 		start(sequencer);
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
@@ -69,6 +80,7 @@ class wb_api_base_seq extends uvm_sequence#(wb_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	task read_transaction(input bit [31:0] address);
 		set_address(address);
+		is_write = 0;
 		start(sequencer);
 	endtask
 	 

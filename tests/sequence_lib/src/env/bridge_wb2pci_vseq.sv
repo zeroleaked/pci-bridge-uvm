@@ -20,17 +20,24 @@ class bridge_wb2pci_vseq extends uvm_sequence#(uvm_sequence_item);
 	// Description : write to pci
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
-		wb_write_seq wb_write;
+		wb_img1_seq wb_write;
 		pci_target_seq pci_target;
-		// wb_read_seq read_seq;
+		
+		wb_img1_seq wb_read;
+		
+		bit [31:0] test_addr, test_data;
 
-		wb_write = wb_write_seq::type_id::create("req");
+		test_addr = 32'h3;
+		test_data = 32'h12153524;
+
+		wb_write = wb_img1_seq::type_id::create("req");
 		wb_write.configure(wb_sequencer);
-		wb_write.write_transaction(32'h3, 32'h12153524);
+		wb_write.write_transaction(test_addr, test_data);
 
 		pci_target = pci_target_seq::type_id::create("req");
 		pci_target.start(pci_sequencer);
     	`uvm_info(get_type_name(), "normal single memory write through wb image to pci sequence completed", UVM_LOW)
+
 
 		
 	endtask

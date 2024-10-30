@@ -1,15 +1,15 @@
-`ifndef WB_WRITE_SEQ
-`define WB_WRITE_SEQ
-class wb_write_seq extends wb_api_base_seq;
+`ifndef WB_IMG1_SEQ
+`define WB_IMG1_SEQ
+class wb_img1_seq extends wb_api_base_seq;
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_object_utils(wb_write_seq)
+	`uvm_object_utils(wb_img1_seq)
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Description : sequence constructor
 	//////////////////////////////////////////////////////////////////////////////
-	function new(string name = "wb_write_seq");
+	function new(string name = "wb_img1_seq");
 		super.new(name);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
@@ -19,18 +19,6 @@ class wb_write_seq extends wb_api_base_seq;
 	task set_address(input bit [31:0] address);
 		this.req_address = address | W_BASE_ADDR_1;
 	endtask
-	///////////////////////////////////////////////////////////////////////////////
-	// Method name : do_randomize 
-	// Description : Setup randomize constraints for config read
-	//////////////////////////////////////////////////////////////////////////////
-	virtual function bit do_randomize();
-		return req.randomize() with {
-			req.is_write == 1'b1;
-			req.address[31:2] == req_address[31:2];
-			req.data == req_data;
-			req.select == 4'hF;
-		};
-	endfunction
 	 
 endclass
 
