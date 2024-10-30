@@ -1,18 +1,18 @@
-`ifndef BRIDGE_WB2PCI_VSEQ
-`define BRIDGE_WB2PCI_VSEQ
-class bridge_wb2pci_vseq extends uvm_sequence#(uvm_sequence_item);
+`ifndef WB2PCI_RW_VSEQ
+`define WB2PCI_RW_VSEQ
+class wb2pci_rw_vseq extends uvm_sequence#(uvm_sequence_item);
 	// Initialize the basic Config Registers of the PCI bridge
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_object_utils(bridge_wb2pci_vseq)
+	`uvm_object_utils(wb2pci_rw_vseq)
 	pci_sequencer pci_sequencer;
 	wb_sequencer wb_sequencer;
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Description : sequence constructor
 	//////////////////////////////////////////////////////////////////////////////
-	function new(string name = "bridge_wb2pci_vseq");
+	function new(string name = "wb2pci_rw_vseq");
 		super.new(name);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////
