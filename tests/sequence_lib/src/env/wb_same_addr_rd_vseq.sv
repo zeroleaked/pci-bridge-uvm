@@ -1,16 +1,16 @@
-`ifndef WB2PCI_MR_SA_VSEQ
-`define WB2PCI_MR_SA_VSEQ
-class wb2pci_mr_sa_vseq extends bridge_base_vseq;
+`ifndef WB_SAME_ADDR_RD_VSEQ
+`define WB_SAME_ADDR_RD_VSEQ
+class wb_same_addr_rd_vseq extends bridge_base_vseq;
 	// Multiple read, single address, multiple data
 	///////////////////////////////////////////////////////////////////////////////
 	// Declaration of Sequence utils
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_object_utils(wb2pci_mr_sa_vseq)
+	`uvm_object_utils(wb_same_addr_rd_vseq)
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : new
 	// Description : sequence constructor
 	//////////////////////////////////////////////////////////////////////////////
-	function new(string name = "wb2pci_mr_sa_vseq");
+	function new(string name = "wb_same_addr_rd_vseq");
 		super.new(name);
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////

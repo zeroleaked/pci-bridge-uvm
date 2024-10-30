@@ -21,20 +21,20 @@ class wb_image_vseq extends uvm_sequence#(uvm_sequence_item);
 	//////////////////////////////////////////////////////////////////////////////
 	virtual task body();
 		pci_wb_image_config_seq image_cfg_seq; 
-		wb2pci_rw_vseq rw_vseq;
-		wb2pci_mr_sa_vseq mr_sa_vseq;
-		wb2pci_mw_ma_vseq mw_ma_vseq;
+		wb_pci_rw_vseq rw_vseq;
+		wb_same_addr_rd_vseq mr_sa_vseq;
+		wb_multi_write_vseq mw_ma_vseq;
 
 		image_cfg_seq = pci_wb_image_config_seq::type_id::create("req");
 		image_cfg_seq.start(pci_sequencer);
 
-		rw_vseq = wb2pci_rw_vseq::type_id::create("req");
+		rw_vseq = wb_pci_rw_vseq::type_id::create("req");
 		rw_vseq.start_with(pci_sequencer, wb_sequencer);
 
-		mr_sa_vseq = wb2pci_mr_sa_vseq::type_id::create("req");
+		mr_sa_vseq = wb_same_addr_rd_vseq::type_id::create("req");
 		mr_sa_vseq.start_with(pci_sequencer, wb_sequencer);
 
-		mw_ma_vseq = wb2pci_mw_ma_vseq::type_id::create("req");
+		mw_ma_vseq = wb_multi_write_vseq::type_id::create("req");
 		mw_ma_vseq.start_with(pci_sequencer, wb_sequencer);
 
     	`uvm_info(get_type_name(), "wb image test sequence completed", UVM_LOW)
@@ -45,4 +45,5 @@ endclass
 
 `endif
 
-
+pci_memory_write_seq.sv
+pci_bridge_scoreboard.sv
