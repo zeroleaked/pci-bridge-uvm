@@ -19,6 +19,7 @@ package bridge_seq_list;
 
 	`include "wb2pci_rw_vseq.sv"
 	`include "wb2pci_mr_sa_vseq.sv"
+	`include "wb2pci_mw_ma_vseq.sv"
 
 	`include "wb_image_vseq.sv"
 
