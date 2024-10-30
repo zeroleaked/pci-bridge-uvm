@@ -109,7 +109,7 @@ class pci_bridge_ref_model extends uvm_component;
 		if (is_in_range) begin
 			wait (pci_target_queue.size() > 0);
 			pci_trans = pci_target_queue.pop_front();
-			pci_trans.address = wb_trans.address & mask;
+			pci_trans.address = wb_trans.address & ~(32'b11); // ignore 2 LSB
 			pci_trans.byte_en = ~wb_trans.select; // pci is active low, wb is active high
 			pci_trans.trans_type = PCI_TARGET;
 			// if write, then data is filled by wishbone
