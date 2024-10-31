@@ -120,12 +120,16 @@ class wb_image_vseq extends uvm_sequence#(uvm_sequence_item);
 		for (int addr = 32'h200; addr > 0; addr += -4) begin
 			// write
 			wb_write.write_transaction(addr-4);
-			pci_write_response.write_response();
 
-			// then read a different address
+			// then read a different address, wb read should not wait for
+			// the previous pci write response
 			fork
 				wb_read.read_transaction(addr);
-				pci_read_response.read_response();
+				
+				begin
+					pci_write_response.write_response();
+					pci_read_response.read_response();
+				end
 			join
 		end
 	endtask
