@@ -46,6 +46,7 @@ class wb_image_vseq extends uvm_sequence#(uvm_sequence_item);
 		wb_pci_read_write();
 		wb_same_address_read();
 		wb_multiple_write();
+		wb_multiple_b2b_rw_vseq();
 
     	`uvm_info(get_type_name(), "wb image test sequence completed", UVM_LOW)
 	endtask
@@ -110,6 +111,27 @@ class wb_image_vseq extends uvm_sequence#(uvm_sequence_item);
 		end
 
 		`uvm_info(get_type_name(), "multiple non-consecutive single memory writes through wishbone slave unit sequence completed", UVM_LOW)	
+	endtask
+	///////////////////////////////////////////////////////////////////////////////
+	// Method name : wb_multiple_b2b_rw_vseq
+	// Description : multiple fast back2back single writes/reads
+	//////////////////////////////////////////////////////////////////////////////
+	task wb_multiple_b2b_rw_vseq();
+		for (int addr = 32'h200; addr > 0; addr += -4) begin
+			// write
+			wb_write.write_transaction(addr-4);
+
+			// then read a different address, wb read should not wait for
+			// the previous pci write response
+			fork
+				wb_read.read_transaction(addr);
+				
+				begin
+					pci_write_response.write_response();
+					pci_read_response.read_response();
+				end
+			join
+		end
 	endtask
 endclass
 
