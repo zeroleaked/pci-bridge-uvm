@@ -25,8 +25,8 @@ class pci_transaction_coverage #(type T=pci_transaction) extends uvm_subscriber#
 			bins mem_space_low = {[32'h8000_0000:32'h8FFF_FFFF]};
 			bins mem_space_high = {[32'h9000_0000:32'h9FFF_FFFF]};
 			// Different devices (based on upper bits)
-			bins device_0 = {[32'h0000_0000:32'h0FFF_FFFF]};
-			bins device_1 = {[32'h1000_0000:32'h1FFF_FFFF]};
+			bins device_0 = {[32'h1000_0000:32'h1FFF_FFFF]};
+			bins device_1 = {[32'hc000_0000:32'hcFFF_FFFF]}; // image1
 		}
 
 		// Data pattern coverage
