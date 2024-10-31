@@ -28,7 +28,7 @@ class pci_memory_write_seq extends pci_initiator_base_seq;
 			req.command == MEM_WRITE;
 			req.address == req_address;
 			req.data == req_data;
-			req.byte_en	== 4'h0;
+			req.byte_en	== 4'hF;
 			req.trans_type == PCI_INITIATOR;
 		};
 	endfunction

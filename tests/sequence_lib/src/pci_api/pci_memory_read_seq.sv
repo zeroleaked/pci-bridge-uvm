@@ -27,7 +27,7 @@ class pci_memory_read_seq extends pci_initiator_base_seq;
 		return req.randomize() with {
 			req.command == MEM_READ;
 			req.address == req_address;
-			req.byte_en	== 4'h0;
+			req.byte_en	== 4'hF;
 			req.trans_type == PCI_INITIATOR;
 		};
 	endfunction

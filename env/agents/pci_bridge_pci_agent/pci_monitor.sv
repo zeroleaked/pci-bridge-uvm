@@ -91,7 +91,7 @@ class pci_monitor extends uvm_monitor;
 		end
 		// Collect data if target responded in time
 		tx.data = vif.rc_cb.AD;
-		tx.byte_en = vif.rc_cb.CBE;
+		tx.byte_en = ~vif.rc_cb.CBE;
 		@(vif.rc_cb); // Wait for next clock
 	endtask
 endclass : pci_monitor

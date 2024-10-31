@@ -6,7 +6,9 @@ typedef enum bit [3:0] {
     CFG_READ  = 4'b1010,  // Configuration Read
     CFG_WRITE = 4'b1011,  // Configuration Write
     MEM_READ  = 4'b0110,  // Memory Read
-    MEM_WRITE = 4'b0111   // Memory Write
+    MEM_WRITE = 4'b0111,   // Memory Write
+	IO_READ = 4'b0010,
+	IO_WRITE = 4'b0011
 } pci_cmd_t;
 
 typedef enum {

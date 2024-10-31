@@ -161,7 +161,7 @@ class pci_driver extends uvm_driver #(pci_transaction);
 	//////////////////////////////////////////////////////////////////////////////
 	task drive_data_phase(pci_transaction tx);
 		vif.dr_cb.IRDY <= 1'b0;   // Assert IRDY#
-		vif.dr_cb.CBE <= tx.byte_en; // All byte enables active
+		vif.dr_cb.CBE <= ~tx.byte_en;
 
 		// wait_with_timeout(vif.dr_cb.TRDY, "TRDY", is_timeout);
 				// Wait for target ready with timeout
