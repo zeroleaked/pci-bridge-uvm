@@ -17,7 +17,7 @@ class pci_memory_read_seq extends pci_initiator_base_seq;
 	// Description : override base set_address 
 	//////////////////////////////////////////////////////////////////////////////
 	task set_address(input bit [31:0] address);
-		this.req_address = address | TAR0_BASE_ADDR_0;
+		this.req_address = address | TAR_BASE_ADDR_0;
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_randomize 

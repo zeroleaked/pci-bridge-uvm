@@ -6,6 +6,7 @@ class pci_transaction_coverage #(type T=pci_transaction) extends uvm_subscriber#
 	// Declaration of Local fields
 	///////////////////////////////////////////////////////////////////////////////
 	pci_transaction cov_trans;
+	pci_cmd_t prev_command;
 	`uvm_component_utils(pci_transaction_coverage)
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -17,15 +18,14 @@ class pci_transaction_coverage #(type T=pci_transaction) extends uvm_subscriber#
 
 		// Address space coverage
 		pci_address: coverpoint cov_trans.address {
-			// Configuration space (first 256 bytes per device)
-			bins config_space[] = {[0:32'hFC]} with (item % 4 == 0);
-			// // I/O space
+			// Configuration space (the mandatory PCI header for PCI compliance)
+			bins config_space[] = {[0:32'h3F]} with (item % 4 == 0);
+			// // I/O space to do
 			bins io_space = {[32'h0000_0000:32'h0000_FFFF]};
 			// Memory space
-			bins mem_space_low = {[32'h8000_0000:32'h8FFF_FFFF]};
-			bins mem_space_high = {[32'h9000_0000:32'h9FFF_FFFF]};
+			bins mem_space[] = {[TAR_BASE_ADDR_0 : TAR_BASE_ADDR_0 + TAR_MEM_SIZE_0 - 1]};
 			// Different devices (based on upper bits)
-			bins device_0 = {[32'h1000_0000:32'h1FFF_FFFF]};
+			bins device_0 = {[32'h1000_0000:32'h1FFF_FFFF]}; // bridge
 			bins device_1 = {[32'hc000_0000:32'hcFFF_FFFF]}; // image1
 		}
 
@@ -117,17 +117,39 @@ class pci_transaction_coverage #(type T=pci_transaction) extends uvm_subscriber#
 
 		// cmd_burst_cross: cross pci_command, burst_length {
 		// 	// Configuration cycles can't be burst
-		// 	illegal_bins config_burst = binsof(pci_command) intersect {PCI_CONFIG_READ, PCI_CONFIG_WRITE} &&
+		// 	illegal_bins config_burst = binsof(pci_command) intersect {CFG_READ, CFG_WRITE} &&
 		// 							  !binsof(burst_length.single);
 		// }
 
-		// // Transaction ordering coverage
-		// trans_order: coverpoint cov_trans.prev_trans_type {
-		// 	bins posted_write_read = {PREV_POSTED_WRITE_READ};
-		// 	bins read_write = {PREV_READ_WRITE};
-		// 	bins multiple_posted = {PREV_MULTIPLE_POSTED};
-		// 	bins other_order = default;
-		// }
+		// Transaction ordering coverage
+		trans_order: coverpoint cov_trans.command {
+			// Write-Read ordering
+			bins posted_write_to_read = (MEM_WRITE => MEM_READ);
+			bins posted_write_to_cfg_read = (MEM_WRITE => CFG_READ);
+			bins posted_write_to_io_read = (MEM_WRITE => IO_READ);
+			
+			// Read-Write ordering
+			bins read_to_posted_write = (MEM_READ => MEM_WRITE);
+			bins read_to_cfg_write = (MEM_READ => CFG_WRITE);
+			bins read_to_io_write = (MEM_READ => IO_WRITE);
+			
+			// Write-Write ordering
+			bins write_to_write = (MEM_WRITE => MEM_WRITE);
+			bins write_to_cfg_write = (MEM_WRITE => CFG_WRITE);
+			bins write_to_io_write = (MEM_WRITE => IO_WRITE);
+			
+			// Read-Read ordering
+			bins read_to_read = (MEM_READ => MEM_READ);
+			bins read_to_cfg_read = (MEM_READ => CFG_READ);
+			bins read_to_io_read = (MEM_READ => IO_READ);
+			
+			// Config-Config ordering
+			bins cfg_write_to_cfg_read = (CFG_WRITE => CFG_READ);
+			bins cfg_read_to_cfg_write = (CFG_READ => CFG_WRITE);
+			
+			// IO transaction ordering
+			bins io_write_to_read = (IO_WRITE => MEM_READ);
+		}
 	endgroup
 
 	//////////////////////////////////////////////////////////////////////////////
