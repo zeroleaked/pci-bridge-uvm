@@ -9,6 +9,7 @@ class wb_transaction extends uvm_sequence_item;
 	rand bit [31:0] address;
 	rand bit [31:0] data;
 	rand bit [3:0] select;
+	rand int trans_id;
 	//////////////////////////////////////////////////////////////////////////////
 	//Declaration of Utility and Field macros,
 	//////////////////////////////////////////////////////////////////////////////
@@ -17,6 +18,7 @@ class wb_transaction extends uvm_sequence_item;
 		`uvm_field_int(address, UVM_ALL_ON)
 		`uvm_field_int(data, UVM_ALL_ON)
 		`uvm_field_int(select, UVM_ALL_ON)
+		`uvm_field_int(trans_id, UVM_DEFAULT | UVM_NOCOMPARE)
 	`uvm_object_utils_end
 	 
 	//////////////////////////////////////////////////////////////////////////////

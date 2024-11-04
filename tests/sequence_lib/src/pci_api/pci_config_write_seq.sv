@@ -22,7 +22,7 @@ class pci_config_write_seq extends pci_initiator_base_seq;
 			req.address == req_address;
 			req.data == req_data;
 			req.byte_en	== 4'hF;
-			req.trans_type == PCI_INITIATOR;
+			req.role == PCI_INITIATOR;
 		};
 	endfunction
 	 

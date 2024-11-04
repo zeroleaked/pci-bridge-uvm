@@ -43,7 +43,7 @@ class pci_driver extends uvm_driver #(pci_transaction);
 		forever begin
 			seq_item_port.get_next_item(req);
 
-			case (req.trans_type)
+			case (req.role)
 				PCI_INITIATOR: drive_initiator_transaction(req);
 				PCI_TARGET: drive_target_transaction(req);
 			endcase

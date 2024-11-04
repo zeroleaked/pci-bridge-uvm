@@ -14,6 +14,6 @@ typedef enum bit [3:0] {
 typedef enum {
 	PCI_INITIATOR, // testbench acting as PCI initiator
 	PCI_TARGET // testbench acting as PCI target
-} pci_trans_type_t;
+} pci_role_t;
 
 `endif // PCI_BRIDGE_PCI_DEFINES_SVH

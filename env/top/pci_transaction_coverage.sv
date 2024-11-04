@@ -57,13 +57,13 @@ class pci_transaction_coverage #(type T=pci_transaction) extends uvm_subscriber#
 		}
 
 		// Transaction type coverage
-		pci_trans_type: coverpoint cov_trans.trans_type {
+		pci_role: coverpoint cov_trans.role {
 			bins dut_target = {PCI_INITIATOR};
 			bins dut_initiator = {PCI_TARGET};
 		}
 
 		// // PCI type coverage
-		// pci_trans_type: coverpoint cov_trans.pci_type {
+		// pci_role: coverpoint cov_trans.pci_type {
 		// 	bins single_cycle = {PCI_SINGLE};
 		// 	bins burst = {PCI_BURST};
 		// 	bins write_invalidate = {PCI_WRITE_INV};

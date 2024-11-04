@@ -46,7 +46,7 @@ class pci_bridge_ref_model extends uvm_component;
 	// Description : Analysis port write implementations
 	///////////////////////////////////////////////////////////////////////////////
 	function void write_pci(pci_transaction trans);
-		if (trans.trans_type == PCI_INITIATOR)
+		if (trans.role == PCI_INITIATOR)
 			pci_initiator_queue.push_back(trans);
 		else
 			pci_target_queue.push_back(trans);
@@ -111,7 +111,7 @@ class pci_bridge_ref_model extends uvm_component;
 			pci_trans = pci_target_queue.pop_front();
 			pci_trans.address = wb_trans.address & ~(32'b11); // ignore 2 LSB
 			pci_trans.byte_en = wb_trans.select; // pci is active low, wb is active high
-			pci_trans.trans_type = PCI_TARGET;
+			pci_trans.role = PCI_TARGET;
 			// if write, then data is filled by wishbone
 			if (wb_trans.is_write) begin
 				pci_trans.command = MEM_WRITE;
@@ -122,6 +122,8 @@ class pci_bridge_ref_model extends uvm_component;
 				pci_trans.command = MEM_READ;
 				wb_trans.data = pci_trans.data;
 			end
+			// tag pci trans as match for wb trans
+			pci_trans.trans_id = wb_trans.trans_id;
 			pci_rm2sb_port.write(pci_trans);
 		end
 	endtask
