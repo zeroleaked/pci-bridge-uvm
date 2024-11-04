@@ -18,6 +18,7 @@ package pci_bridge_env_pkg;
    // include top env files 
    /////////////////////////////////////////////////////////
   `include "pci_transaction_coverage.sv"
+  `include "wb_transaction_coverage.sv"
   `include "pci_bridge_scoreboard.sv"
   `include "pci_bridge_env.sv"
 

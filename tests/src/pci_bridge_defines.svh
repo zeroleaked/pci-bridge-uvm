@@ -1,9 +1,13 @@
 `ifndef PCI_BRIDGE_DEFINES_SVH
 `define PCI_BRIDGE_DEFINES_SVH
 
+// bridge registers
 parameter bit [31:0] TAR_BASE_ADDR_0 = 32'h1000_0000;
-parameter bit [31:0] TAR_MEM_SIZE_0 = 32'h0000_0200; // bridge registers
+parameter bit [31:0] TAR_MEM_SIZE_0 = 32'h0000_0200;
+
+// wishbone image 1
 parameter bit [31:0] W_BASE_ADDR_1 = 32'hC000_0000;
+parameter bit [31:0] W_SIZE_1 = 32'h0000_0FFF; // minimum block size 4 kB
 
 // Register address definitions
 typedef enum bit [11:0] {

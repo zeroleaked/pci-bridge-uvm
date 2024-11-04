@@ -23,10 +23,10 @@ class pci_transaction_coverage #(type T=pci_transaction) extends uvm_subscriber#
 			// // I/O space to do
 			bins io_space = {[32'h0000_0000:32'h0000_FFFF]};
 			// Memory space
-			bins mem_space[] = {[TAR_BASE_ADDR_0 : TAR_BASE_ADDR_0 + TAR_MEM_SIZE_0 - 1]};
+			bins bridge_regs[] = {[TAR_BASE_ADDR_0 : TAR_BASE_ADDR_0 + TAR_MEM_SIZE_0 - 1]};
 			// Different devices (based on upper bits)
 			bins device_0 = {[32'h1000_0000:32'h1FFF_FFFF]}; // bridge
-			bins device_1 = {[32'hc000_0000:32'hcFFF_FFFF]}; // image1
+			bins device_1 = {[W_BASE_ADDR_1:W_BASE_ADDR_1+W_SIZE_1]}; // image1
 		}
 
 		// Data pattern coverage
