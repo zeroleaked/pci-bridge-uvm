@@ -9,6 +9,8 @@ package pci_bridge_pci_agent_pkg;
 	 //////////////////////////////////////////////////////////
 	 // include Agent components : driver,monitor,sequencer
 	 /////////////////////////////////////////////////////////
+	import agent_common_pkg::*;
+
 	`include "pci_bridge_pci_defines.svh" // use this for agent constants
 
 	`include "pci_transaction.sv"

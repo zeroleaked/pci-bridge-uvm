@@ -123,6 +123,8 @@ class pci_bridge_ref_model extends uvm_component;
 				wb_trans.data = pci_trans.data;
 			end
 			// tag pci trans as match for wb trans
+			pci_trans.has_match = 1;
+			wb_trans.has_match = 1;
 			pci_trans.trans_id = wb_trans.trans_id;
 			pci_rm2sb_port.write(pci_trans);
 		end

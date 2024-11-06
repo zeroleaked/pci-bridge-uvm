@@ -9,6 +9,8 @@ package pci_bridge_wb_agent_pkg;
    //////////////////////////////////////////////////////////
    // include Agent components : driver,monitor,sequencer
    /////////////////////////////////////////////////////////
+	import agent_common_pkg::*;
+	
   // `include "pci_bridge_wb_defines.svh" use this for agent constants
   `include "wb_transaction.sv"
   `include "wb_driver.sv"

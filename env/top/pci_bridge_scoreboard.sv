@@ -16,8 +16,11 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 	uvm_analysis_imp_wb_act #(wb_transaction, pci_bridge_scoreboard) wb_act_imp;
 
 	// Transaction queues
+	// incoming transaction
 	pci_transaction pci_exp_queue[$], pci_act_queue[$];
 	wb_transaction wb_exp_queue[$], wb_act_queue[$];
+	// outcoming transaction
+	uvm_sequence_item pair_queue[$];
 
 	// Error flag
 	bit error;
@@ -98,7 +101,33 @@ class pci_bridge_scoreboard extends uvm_scoreboard;
 		end else begin
 			`uvm_info(get_type_name(), $sformatf("WB  match %s\t0x%h: 0x%h", (act_trans.is_write ? "WRITE" : "READ "), act_trans.address, act_trans.data), UVM_LOW)
 		end
+
+		// if (exp_trans.has_match)
+		// 	find_match(exp_trans);
 	endtask	
+
+	// task find_match(uvm_sequence_item trans);
+	// 	foreach (wb_trans_queue[i]) begin
+	// 		if (wb_trans_queue[i].trans_id == trans.trans_id) begin
+	// 			// Found a match!
+	// 			bridge_coverage::bridge_trans_pair pair;
+	// 			pair.pci = trans;
+	// 			pair.wb = wb_trans_queue[i];
+	// 			pair.latency = $time - wb_trans_queue[i].start_time;
+				
+	// 			// Send to coverage
+	// 			matched_ap.write(pair);
+				
+	// 			// Mark both transactions as matched
+	// 			trans.has_match = 1;
+	// 			wb_trans_queue[i].has_match = 1;
+				
+	// 			// Remove matched WB transaction
+	// 			wb_trans_queue.delete(i);
+	// 			return;
+	// 		end
+	// 	end
+	// endtask
 
 	function void report_phase(uvm_phase phase);
 		$display($sformatf("PCI queue: %d/%d\nWB queue: %d/%d", pci_act_queue.size(), pci_exp_queue.size(), wb_act_queue.size(), wb_exp_queue.size()));

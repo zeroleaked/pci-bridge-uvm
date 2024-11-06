@@ -1,28 +1,25 @@
-`ifndef WB_TRANSACTION 
-`define WB_TRANSACTION
+`ifndef BRIDGE_BASE_TRANSACTION 
+`define BRIDGE_BASE_TRANSACTION
 
-class wb_transaction extends bridge_base_transaction;
+class bridge_base_transaction extends uvm_sequence_item;
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of transaction fields
 	//////////////////////////////////////////////////////////////////////////////
-	rand bit is_write;
-	rand bit [31:0] address;
-	rand bit [31:0] data;
-	rand bit [3:0] select;
+	// fields for pairing (wb2pci/pci2wb)
+	rand bit has_match;
+	rand int trans_id;
 	//////////////////////////////////////////////////////////////////////////////
 	//Declaration of Utility and Field macros,
 	//////////////////////////////////////////////////////////////////////////////
-	`uvm_object_utils_begin(wb_transaction)
-		`uvm_field_int(is_write, UVM_ALL_ON)
-		`uvm_field_int(address, UVM_ALL_ON)
-		`uvm_field_int(data, UVM_ALL_ON)
-		`uvm_field_int(select, UVM_ALL_ON)
+	`uvm_object_utils_begin(bridge_base_transaction)
+		`uvm_field_int(trans_id, UVM_DEFAULT | UVM_NOCOMPARE)
+		`uvm_field_int(has_match, UVM_DEFAULT | UVM_NOCOMPARE)
 	`uvm_object_utils_end
 	 
 	//////////////////////////////////////////////////////////////////////////////
 	//Constructor
 	//////////////////////////////////////////////////////////////////////////////
-	function new(string name = "wb_transaction");
+	function new(string name = "bridge_base_transaction");
 		super.new(name);
 	endfunction
 	//////////////////////////////////////////////////////////////////////////////
