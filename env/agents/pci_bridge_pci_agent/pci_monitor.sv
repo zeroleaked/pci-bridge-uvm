@@ -71,8 +71,8 @@ class pci_monitor extends uvm_monitor;
 		tx = pci_transaction::type_id::create("tx");
 		$cast(tx.command, command);
 		tx.address = vif.rc_cb.AD;
-		if (!vif.rc_cb.GNT) tx.trans_type = PCI_TARGET;
-		else tx.trans_type = PCI_INITIATOR;
+		if (!vif.rc_cb.GNT) tx.role = PCI_TARGET;
+		else tx.role = PCI_INITIATOR;
 		@(vif.rc_cb); // Wait for next clock
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ class pci_monitor extends uvm_monitor;
 		end
 		// Collect data if target responded in time
 		tx.data = vif.rc_cb.AD;
-		tx.byte_en = vif.rc_cb.CBE;
+		tx.byte_en = ~vif.rc_cb.CBE;
 		@(vif.rc_cb); // Wait for next clock
 	endtask
 endclass : pci_monitor

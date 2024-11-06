@@ -17,7 +17,7 @@ class pci_memory_write_seq extends pci_initiator_base_seq;
 	// Description : override base set_address 
 	//////////////////////////////////////////////////////////////////////////////
 	task set_address(input bit [31:0] address);
-		this.req_address = address | TAR0_BASE_ADDR_0;
+		this.req_address = address | TAR_BASE_ADDR_0;
 	endtask
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : do_randomize 
@@ -28,8 +28,8 @@ class pci_memory_write_seq extends pci_initiator_base_seq;
 			req.command == MEM_WRITE;
 			req.address == req_address;
 			req.data == req_data;
-			req.byte_en	== 4'h0;
-			req.trans_type == PCI_INITIATOR;
+			req.byte_en	== 4'hF;
+			req.role == PCI_INITIATOR;
 		};
 	endfunction
 	 

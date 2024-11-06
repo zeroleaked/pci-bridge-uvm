@@ -22,7 +22,7 @@ class pci_config_read_seq extends pci_initiator_base_seq;
 			req.command == CFG_READ;
 			req.address == req_address;
 			req.byte_en	== 4'hF;
-			req.trans_type == PCI_INITIATOR;
+			req.role == PCI_INITIATOR;
 		};
 		// return ok;
 	endfunction

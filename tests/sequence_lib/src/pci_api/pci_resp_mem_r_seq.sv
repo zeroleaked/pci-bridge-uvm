@@ -22,7 +22,7 @@ class pci_resp_mem_r_seq extends pci_target_base_seq;
 		return req.randomize() with {
 			if (is_data)
 				req.data == req_data;
-			req.trans_type == PCI_TARGET;
+			req.role == PCI_TARGET;
 		};
 	endfunction
 	///////////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 `ifndef PCI_TRANSACTION 
 `define PCI_TRANSACTION
 
-class pci_transaction extends uvm_sequence_item;
+class pci_transaction extends bridge_base_transaction;
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of transaction fields
 	//////////////////////////////////////////////////////////////////////////////
@@ -9,7 +9,7 @@ class pci_transaction extends uvm_sequence_item;
 	rand bit [31:0] data;
 	rand bit [3:0] byte_en;
 	rand pci_cmd_t command;
-	rand pci_trans_type_t trans_type;
+	rand pci_role_t role;
 	//////////////////////////////////////////////////////////////////////////////
 	//Declaration of Utility and Field macros,
 	//////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ class pci_transaction extends uvm_sequence_item;
 		`uvm_field_int(data, UVM_ALL_ON)
 		`uvm_field_int(byte_en, UVM_ALL_ON)
     	`uvm_field_enum(pci_cmd_t, command, UVM_ALL_ON)
-    	`uvm_field_enum(pci_trans_type_t, trans_type, UVM_ALL_ON)
+    	`uvm_field_enum(pci_role_t, role, UVM_ALL_ON)
 	`uvm_object_utils_end
 	//////////////////////////////////////////////////////////////////////////////
 	//Constructor
@@ -29,7 +29,6 @@ class pci_transaction extends uvm_sequence_item;
 	//////////////////////////////////////////////////////////////////////////////
 	// Declaration of Constraints
 	//////////////////////////////////////////////////////////////////////////////
-	// constraint initial_trans_stat { status == TRANS_OK; }
 	///////////////////////////////////////////////////////////////////////////////
 	// Method name : is_write 
 	// Description : check if transaction is write operation

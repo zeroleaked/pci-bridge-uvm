@@ -24,7 +24,7 @@ class pci_bus_setup_seq extends uvm_sequence#(pci_transaction);
 		// turn on I/O Space (0) and Memory Space (1) accesses, turn on bus master (2)
 		write_seq.write_transaction(COMMAND_STATUS, 32'h7);
 		// set target base address to 1000_0000
-		write_seq.write_transaction(BAR0, TAR0_BASE_ADDR_0);
+		write_seq.write_transaction(BAR0, TAR_BASE_ADDR_0);
     	`uvm_info(get_type_name(), "bus setup sequence completed", UVM_LOW)
 	endtask
 

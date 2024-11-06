@@ -9,8 +9,9 @@ class pci_bridge_environment extends uvm_env;
 	pci_bridge_pci_agent pci_agent;
 	pci_bridge_wb_agent wb_agent;
 	pci_bridge_ref_model ref_model;
-	// pci_bridge_coverage#(pci_bridge_pci_transaction) coverage;
 	pci_bridge_scoreboard sb;
+	pci_transaction_coverage#(pci_transaction) pci_coverage;
+	wb_transaction_coverage#(wb_transaction) wb_coverage;
 	 
 	//////////////////////////////////////////////////////////////////////////////
 	//Declaration of component utils to register with factory
@@ -33,7 +34,8 @@ class pci_bridge_environment extends uvm_env;
 		pci_agent = pci_bridge_pci_agent::type_id::create("pci_bridge_pci_agent", this);
 		wb_agent = pci_bridge_wb_agent::type_id::create("pci_bridge_wb_agent", this);
 		ref_model = pci_bridge_ref_model::type_id::create("ref_model", this);
-		// coverage = pci_bridge_coverage#(pci_bridge_pci_transaction)::type_id::create("coverage", this);
+		pci_coverage = pci_transaction_coverage#(pci_transaction)::type_id::create("pci_cov", this);
+		wb_coverage = wb_transaction_coverage#(wb_transaction)::type_id::create("wb_cov", this);
 		sb = pci_bridge_scoreboard::type_id::create("sb", this);
 	endfunction : build_phase
 	//////////////////////////////////////////////////////////////////////////////
@@ -48,12 +50,12 @@ class pci_bridge_environment extends uvm_env;
 		wb_agent.monitor.mon2sb_port.connect(sb.wb_act_imp);
 
 		// // connect ref to pci
-		// ref_model.pci_rm2sb_port.connect(coverage.analysis_export);
+		ref_model.pci_rm2sb_port.connect(pci_coverage.analysis_export);
 		pci_agent.driver.drv2rm_port.connect(ref_model.pci_imp);
 		ref_model.pci_rm2sb_port.connect(sb.pci_exp_imp);
 
 		// connect ref to wb
-		// // ref_model.wb_rm2sb_port.connect(coverage.wb_analysis_export);
+		ref_model.wb_rm2sb_port.connect(wb_coverage.analysis_export);
 		wb_agent.driver.drv2rm_port.connect(ref_model.wb_imp);
 		ref_model.wb_rm2sb_port.connect(sb.wb_exp_imp);
 	endfunction : connect_phase

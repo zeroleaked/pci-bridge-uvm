@@ -106,7 +106,7 @@ module pci_bridge_tb_top;
 	/*********************starting the execution uvm phases**********************/
 	//////////////////////////////////////////////////////////////////////////////
 	initial begin
-		run_test();
+		run_test("pci_bridge_rw_conf_test");
 	end
 	//////////////////////////////////////////////////////////////////////////////
 	/**********Set the Interface instance Using Configuration Database***********/
